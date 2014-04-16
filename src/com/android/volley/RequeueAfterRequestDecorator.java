@@ -101,11 +101,6 @@ public class RequeueAfterRequestDecorator<T> extends Request<T> {
 	}
 
 	@Override
-	public int compareTo(final Request<T> other) {
-		return wrapped.compareTo(other);
-	}
-
-	@Override
 	public void deliverError(final VolleyError error) {
 		wrapped.deliverError(error);
 		super.deliverError(error);
