@@ -1,3 +1,18 @@
+/*
+* Copyright 2010 - 2014 Monits
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package com.android.volley;
 
 import java.util.Map;
@@ -8,37 +23,49 @@ import com.android.volley.Cache.Entry;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 
+/**
+ * Wrapper for the {@link Request} class, that on failure delegates to a policy to check
+ * if the request should be reattempted and perform actions before doing so (unlike {@link RetryPolicy}).
+ * 
+ * This request is specially useful for things such as detecting credentials to our service expired,
+ * and need to revalidate them before we can attempt to retry this request.
+ * 
+ * By using the decorator pattern, this behavior can be added to any request regardless of it's type
+ * and origin.
+ */
 public class RequeueAfterRequestDecorator<T> extends Request<T> {
 
 	private final Request<T> wrapped;
-
-	private final RequestQueue queue;
-
 	private final RequeuePolicy requeuePolicy;
 
-	private RequeueAfterRequestDecorator(
-			final RequestQueue queue, final Request<T> request, final RequeuePolicy requeuePolicy) {
+	// Can't be final only because we can't instantiate it until the request get's added to a request queue
+	private RequestQueue queue;
+
+	/**
+	 * Private constructor. Call {@link RequeueAfterRequestDecorator#wrap(Request, RequeuePolicy)} instead.
+	 *
+	 * @see {@link RequeueAfterRequestDecorator#wrap(Request, RequeuePolicy)}
+	 */
+	private RequeueAfterRequestDecorator(final Request<T> request, final RequeuePolicy requeuePolicy) {
 		super(request.getMethod(), request.getUrl(), null);
 
 		wrapped = request;
 
-		this.queue = queue;
 		this.requeuePolicy = requeuePolicy;
 	}
 
 	/**
 	 * Wraps a request to extend it's retry functionality.
 	 *
-	 * @param queue the queue where this request should be re-queued.
 	 * @param request the request to wrap.
 	 * @param requeuePolicy the interface to define retry.
 	 *
 	 * @return the request.
 	 */
 	public static <T> RequeueAfterRequestDecorator<T> wrap(
-			final RequestQueue queue, final Request<T> request, final RequeuePolicy requeuePolicy) {
+			final Request<T> request, final RequeuePolicy requeuePolicy) {
 
-		return new RequeueAfterRequestDecorator<T>(queue, request, requeuePolicy);
+		return new RequeueAfterRequestDecorator<T>(request, requeuePolicy);
 	}
 
 	@Override
@@ -71,7 +98,6 @@ public class RequeueAfterRequestDecorator<T> extends Request<T> {
 						public void onResponse(final Object arg0) {
 							queue.add(RequeueAfterRequestDecorator.this);
 						}
-
 					},
 					new ErrorListener() {
 
@@ -136,11 +162,13 @@ public class RequeueAfterRequestDecorator<T> extends Request<T> {
 		return wrapped.getMethod();
 	}
 
+	@Deprecated
 	@Override
 	public byte[] getPostBody() throws AuthFailureError {
 		return wrapped.getPostBody();
 	}
 
+	@Deprecated
 	@Override
 	public String getPostBodyContentType() {
 		return wrapped.getPostBodyContentType();
@@ -188,34 +216,36 @@ public class RequeueAfterRequestDecorator<T> extends Request<T> {
 	}
 
 	@Override
-	public void setCacheEntry(final Entry entry) {
+	public Request<?> setCacheEntry(final Entry entry) {
 		wrapped.setCacheEntry(entry);
-		super.setCacheEntry(entry);
+		return super.setCacheEntry(entry);
 	}
 
 	@Override
-	public void setRequestQueue(final RequestQueue requestQueue) {
+	public Request<?> setRequestQueue(final RequestQueue requestQueue) {
+		this.queue = requestQueue;
+		
 		wrapped.setRequestQueue(requestQueue);
-		super.setRequestQueue(requestQueue);
+		return super.setRequestQueue(requestQueue);
 	}
 
 	@Override
-	public void setRetryPolicy(final RetryPolicy retryPolicy) {
+	public Request<?> setRetryPolicy(final RetryPolicy retryPolicy) {
 		/*
 		 * Request calls to setRetryPolicy on the constructor,
 		 * we don't want to override the retry policy set on the wrapped request
-		 * with the default one, so we ignore that (and avoid a NPE).
+		 * with the default one, so we ignore that on first call (and avoid a NPE).
 		 */
 		if (wrapped != null) {
 			wrapped.setRetryPolicy(retryPolicy);
 		}
 
-		super.setRetryPolicy(retryPolicy);
+		return super.setRetryPolicy(retryPolicy);
 	}
 
 	@Override
-	public void setTag(final Object tag) {
+	public Request<?> setTag(final Object tag) {
 		wrapped.setTag(tag);
-		super.setTag(tag);
+		return super.setTag(tag);
 	}
 }

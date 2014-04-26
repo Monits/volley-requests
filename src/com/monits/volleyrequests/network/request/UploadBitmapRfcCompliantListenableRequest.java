@@ -1,4 +1,19 @@
-package com.monits.android_volley.network.request;
+/*
+* Copyright 2010 - 2014 Monits
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+package com.monits.volleyrequests.network.request;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,6 +32,13 @@ import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.toolbox.HttpHeaderParser;
 
+/**
+ * Implementation of {@link RfcCompliantListenableRequest} used to upload
+ * JPEG images as Multipart files.
+ * 
+ * The files are uploaded in the same size and resolution as provided,
+ * any scaling / quality processing should be done ahead by the developer.
+ */
 public class UploadBitmapRfcCompliantListenableRequest extends
 		RfcCompliantListenableRequest<String> {
 
@@ -31,6 +53,16 @@ public class UploadBitmapRfcCompliantListenableRequest extends
 	private final Bitmap bitmap;
 	private final String filename;
 	
+	/**
+	 * Creates a new UploadBitmapRfcCompliantListenableRequest request.
+	 * 
+	 * @param method The request method, {@see Method}
+	 * @param url The url to be requested.
+	 * @param listener The listener for success.
+	 * @param errListener The listener for errors.
+	 * @param bmp The bitmap to be uploaded.
+	 * @param filename The filename under which to submit the image.
+	 */
 	public UploadBitmapRfcCompliantListenableRequest(final int method, final String url,
 			final Listener<String> listener, final ErrorListener errListener, final Bitmap bmp, final String filename) {
 		super(method, url, listener, errListener);
@@ -38,7 +70,10 @@ public class UploadBitmapRfcCompliantListenableRequest extends
 		bitmap = bmp;
 		this.filename = filename;
 		
-		// 30 secs timeout, 1 reattempt, 45 secs timeout for the second attempt
+		/*
+		 * Default Volley timeout is too low for most images in slow networks.
+		 * 30 secs timeout, 1 reattempt, 45 secs timeout for the second attempt
+		 */
 		setRetryPolicy(new DefaultRetryPolicy(30000, 1, 1.5f));
 	}
 	
