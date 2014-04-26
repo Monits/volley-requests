@@ -54,7 +54,7 @@ directly!
 If you used <code>ImageLoader</code> with any resource that may or may not
 exist, you will probably know <code>ImageLoader</code> don't like getting null
 as the image url, and will throw a nasty <code>NullPointerException</code>.
-This forces developers to cehck every time if the resource is null and then
+This forces developers to check every time if the resource is null and then
 either call <code>ImageLoader</code> or set the default placeholder manually.
 
 We extended <code>ImageLoader</code> to make nulls display the default
@@ -62,7 +62,7 @@ placeholder image and dealt with this. No conditionals bloating your code,
 just tell the <code>ImageLoader</code> what you want and he will get it.
 
 ### Complex retry logic support
-Volley proides a very simple retry support, which extends timeout
+Volley provides a very simple retry support, which extends timeout
 exponentially, and just tries over and over until it succeeds or desists.
 
 However, we found ourselves wanting to do more. For instance, when dealing with
