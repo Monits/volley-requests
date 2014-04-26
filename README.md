@@ -53,7 +53,7 @@ directly!
 ### Null-safe ImageLoader
 If you used <code>ImageLoader</code> with any resource that may or may not
 exist, you will probably know <code>ImageLoader</code> don't like getting null
-as the image url, and will throw nasty a <code>NullPointerException</code>.
+as the image url, and will throw a nasty <code>NullPointerException</code>.
 This forces developers to cehck every time if the resource is null and then
 either call <code>ImageLoader</code> or set the default placeholder manually.
 
