@@ -2,7 +2,8 @@
     "linters": {
         "checkstyle": {
             "type": "checkstyle",
-            "include": "(\\.java$)"
+            "include": "(\\.java$)",
+            "paths": [ "src" ]
         }
     }
 }
