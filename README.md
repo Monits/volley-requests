@@ -61,19 +61,6 @@ We extended <code>ImageLoader</code> to make nulls display the default
 placeholder image and dealt with this. No conditionals bloating your code,
 just tell the <code>ImageLoader</code> what you want and he will get it.
 
-### Complex retry logic support
-Volley provides a very simple retry support, which extends timeout
-exponentially, and just tries over and over until it succeeds or desists.
-
-However, we found ourselves wanting to do more. For instance, when dealing with
-sites that based authentication on cookies, when a request failed due to cookie
-or session expiration, we wanted to attempt a re-login before retrying our
-request.
-
-<code>RequeueAfterRequestDecorator</code> is a decorator that lets you do just
-that. By being a decorator you can easily wrap this behaviour around any
-existing request, making it versatile and easy to apply across any application.
-
 # Contributing
 We encourage you to contribute to this project!
 
