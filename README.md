@@ -61,6 +61,36 @@ We extended <code>ImageLoader</code> to make nulls display the default
 placeholder image and dealt with this. No conditionals bloating your code,
 just tell the <code>ImageLoader</code> what you want and he will get it.
 
+### Rest support
+
+Create the corresponding <code>GsonRequest</code> for a particular resource. For any
+resource you can get the collection resource executing getAll(...) method and
+this will create the resource for you.
+Available request methods are, <code>Method.GET, Method.PUT, Method.POST</code> 
+and <code>Method.DELETE</code>
+
+#### How to use:
+
+<code> RestSupport mRestSupport = new RestSupport("http://www.example.com/user/:userId"
+, new Gson()); </code>
+
+> If you want to get the user with id 12, add:
+
+<code>
+Map<String, String> resourceParams = new HashMap<String, String>();	
+resourceParams.put("userId", "12");
+
+GsonRequest<YouObjectType> mGsonRequest = mRestSupport.getObject(resourceParams, 
+listener, errListener);
+</code>
+
+> Likewise, if you want to get all available users, add:
+
+<code>GsonRequest<List<YouObjectType>> mGsonRequest = mRestSupport.getAll(resourceParams, 
+listener, errListener);</code>
+
+In this case, the generated url, by <code>RestSupport</code>, is "http://www.example.com/user/"
+
 # Contributing
 We encourage you to contribute to this project!
 
