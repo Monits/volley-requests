@@ -2,6 +2,6 @@
   "project_id" : "MAV",
   "conduit_uri" : "http://ph.monits.com/",
   "load": [
-    "/opt/arc-checkstyle/src"
+    "/opt/arc-lint"
   ]
 }
