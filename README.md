@@ -85,32 +85,30 @@ and <code>Method.DELETE</code>
 
 #### How to use:
 
-<code> RestSupport mRestSupport = new RestSupport("http://www.example.com/user/:userId"
-, new Gson()); </code>
+    String url = "http://www.example.com/user/:userId";
+    RestResource<User> mRestResource = new RestResource(uri, new Gson());
 
-> If you want to get the user with id 12, add:
+If you want to get the user with id 12, add:
 
-<code>
-Map<String, String> resourceParams = new HashMap<String, String>();	
-resourceParams.put("userId", "12");
+    Map<String, String> resourceParams = new HashMap<String, String>();
+    resourceParams.put("userId", "12");
+    
+    GsonRequest<YouObjectType> mGsonRequest = mRestResource
+        .getObject(resourceParams, listener, errListener);
 
-GsonRequest<YouObjectType> mGsonRequest = mRestSupport.getObject(resourceParams, 
-listener, errListener);
-</code>
+Likewise, if you want to get all available users, add:
 
-> Likewise, if you want to get all available users, add:
+    GsonRequest<List<YouObjectType>> mGsonRequest = mRestResource
+        .getAll(resourceParams, listener, errListener);
 
-<code>GsonRequest<List<YouObjectType>> mGsonRequest = mRestSupport.getAll(resourceParams, 
-listener, errListener);</code>
-
-In this case, the generated url, by <code>RestSupport</code>, is "http://www.example.com/user/"
+In this case, the generated url, by `RestResource<User>`, is "http://www.example.com/user/"
 
 # Contributing
 We encourage you to contribute to this project!
 
 We are also looking forward to your bug reports, feature requests and questions
 regarding android-volley.
-
+	
 # Copyright and License
 Copyright 2010-2014 Monits.
 
