@@ -16,47 +16,58 @@
 
 package com.monits.volleyrequests.restsupport;
 
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Request.Method;
+import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.monits.volleyrequests.network.request.GsonRequest;
 
 /**
- * 
+ *
  * Create the corresponding GsonRequest for a particular resource. For any
  * resource you can get the collection resource executing getAll(...) method and
  * this will create the resource for you.
- * 
+ *
  * Example of a resource with parameters: /user/:userId/card/:cardId. Example of
  * a resource without parameters: /user/123/card/4 or /user
- * 
- * 
+ *
+ *
  */
 public class RestResource<T> {
 	private final String resource;
 	private final Class<T> clazz;
 	private final String hostAndPort;
 	private final Gson gson;
+	private String elementsKey = "elements";
 
 	/**
 	 * Create a new instance of RestResource
-	 * 
+	 *
 	 * @param resource
 	 *            The resourcer that you want to access
 	 * @param clazz
 	 *            The type of the object that the json represents
 	 * @throws MalformedURLException
 	 */
-	public RestResource(final String resource, final Class<T> clazz, 
+	public RestResource(final String resource, final Class<T> clazz,
 			final Gson gson) throws MalformedURLException {
 		final URL url = new URL(resource);
 		this.resource = url.getFile();
@@ -67,7 +78,7 @@ public class RestResource<T> {
 
 	/**
 	 * Create the GsonRequest for a GET request from the resource.
-	 * 
+	 *
 	 * @param resourceParams
 	 *            A Map with the value of the parameters that must be replaced
 	 *            in the url resource. The key of the map must be the name of
@@ -95,13 +106,13 @@ public class RestResource<T> {
 	}
 
 	/**
-	 * Create the GsonRequest for a GET request and give the a request for a
+	 * Create the GsonRequest for a GET request and give a request for a
 	 * collection. Example: If your resource is /user/:userId this method create
 	 * the url /user or if your resource is /user/:userId/card/:cardId, the new
 	 * url is /user/123/card. We need to use guava TypeToken because
 	 * Gson.TypeToken cannot accept TypeToken<List<T>>. Until Gson update this
 	 * we will use guava
-	 * 
+	 *
 	 * @param resourceParams
 	 *            A Map with the value of the parameters that must be replaced
 	 *            in the url resource. The key of the map must be the name of
@@ -111,28 +122,34 @@ public class RestResource<T> {
 	 *            The listener for success.getAllResource
 	 * @param errListener
 	 *            The listener for errors.
-	 * @return The GsonRequest with the created request
+	 * @return The JSONArrayGsonRequest with the created request
 	 */
-	public GsonRequest<List<T>> getAll(
-			final Map<String, String> resourceParams,
+	public GsonRequest<List<T>> getAll(final Map<String, String> resourceParams,
 			final Listener<List<T>> listener, final ErrorListener errListener) {
+
 		final String realResource;
+
 		if (resourceParams != null) {
 			realResource = replaceValuesInResource(resourceParams);
 		} else {
 			realResource = this.resource;
 		}
+
 		final String url = getAllResource(realResource);
-		final TypeToken<List<T>> token = createListTypeToken();
-		final GsonRequest<List<T>> gsonRequest = new GsonRequest<List<T>>(
-				Method.GET, this.hostAndPort + url, this.gson,
-				token.getType(), listener, errListener, null);
-		return gsonRequest;
+		if (elementsKey != null) {
+			return new JSONArrayGsonRequest<List<T>>(
+					Method.GET, this.hostAndPort + url, this.gson, createListTypeToken().getType(),
+					listener, errListener, null, elementsKey);
+		}
+
+		return new GsonRequest<List<T>>(
+				Method.GET, this.hostAndPort + url, this.gson, createListTypeToken().getType(),
+				listener, errListener, null);
 	}
 
 	/**
 	 * Create the GsonRequest for a POST or PUT request from the resource.
-	 * 
+	 *
 	 * @param method
 	 *            Supported method Method.PUT or Method.POST
 	 * @param resourceParams
@@ -173,7 +190,7 @@ public class RestResource<T> {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param method
 	 *            Supported method Method.PUT or Method.POST
 	 * @param resourceParams
@@ -212,7 +229,7 @@ public class RestResource<T> {
 
 	/**
 	 * Create the GsonRequest for a DELETE request from the resource.
-	 * 
+	 *
 	 * @param resourceParams
 	 *            A Map with the value of the parameters that must be replaced
 	 *            in the url resource. The key of the map must be the name of
@@ -232,7 +249,7 @@ public class RestResource<T> {
 
 	/**
 	 * Add the query string into the url
-	 * 
+	 *
 	 * @param resourceParams
 	 *            A Map with the value of the parameters that must be replaced
 	 *            in the url resource. The key of the map must be the name of
@@ -268,7 +285,7 @@ public class RestResource<T> {
 
 	/**
 	 * Create the url for get a collection
-	 * 
+	 *
 	 * @param realResource
 	 *            The resource from where you want to get the collection
 	 * @return The url
@@ -288,9 +305,9 @@ public class RestResource<T> {
 	}
 
 	/**
-	 * 
+	 *
 	 * Replace the params value into the resource
-	 * 
+	 *
 	 * @param resourceParams
 	 *            A Map with the value of the parameters that must be replaced
 	 *            in the url resource. The key of the map must be the name of
@@ -306,12 +323,12 @@ public class RestResource<T> {
 		}
 		return url;
 	}
-	
+
 	/**
 	 * Prepare the authority with the corresponding port of the url.
-	 * 
+	 *
 	 * @param url The url for the request
-	 * @return {protocol}://{authority} 
+	 * @return {protocol}://{authority}
 	 */
 	private String prepareHostURL(final URL url) {
 		final StringBuilder builder = new StringBuilder();
@@ -319,7 +336,7 @@ public class RestResource<T> {
 				.append(url.getAuthority());
 		return builder.toString();
 	}
-	
+
 	/**
 	 * Create the TypeToken for a list of generic, using guava TypeToken
 	 * @return The TypeToken using where method
@@ -327,6 +344,50 @@ public class RestResource<T> {
 	private TypeToken<List<T>> createListTypeToken() {
 		return new TypeToken<List<T>>() {}.where(new TypeParameter<T>() {
 		}, TypeToken.of(clazz));
+	}
+
+	/**
+	 * Sets the key for the JSON that retrieves all items of a collection.
+	 * @param elementsKey the key used in the JSON response. If null, it is assumed that the JSON array comes alone
+	 * without being wrapped by an object.
+	 */
+	public void setElementsKey(final String elementsKey) {
+		this.elementsKey = elementsKey;
+	}
+
+
+	/**
+	 * Class to parse a list of all items in a collection from a NetworkResponse depending on a key.
+	 * @author fpredassi
+	 *
+	 * @param <T>
+	 */
+	private static class JSONArrayGsonRequest<T> extends GsonRequest<T> {
+		private final String elementsKey;
+
+		public JSONArrayGsonRequest(final int method, final String url, final Gson gson,
+				final Type clazz, final Listener<T> listener, final ErrorListener errListener,
+				final String jsonBody, final String elementsKey) {
+			super(method, url, gson, clazz, listener, errListener, jsonBody);
+			this.elementsKey = elementsKey;
+		}
+
+		@Override
+		protected Response<T> parseNetworkResponse(final NetworkResponse response) {
+			try {
+				final String headersCharset = HttpHeaderParser.parseCharset(response.headers);
+				final String json = new String(response.data, headersCharset);
+				final JSONObject object = new JSONObject(json);
+				final JSONArray array = object.getJSONArray(elementsKey);
+				final byte[] data = array.toString().getBytes(headersCharset);
+				final NetworkResponse responseJsonArray = new NetworkResponse(data, response.headers);
+				return super.parseNetworkResponse(responseJsonArray);
+			} catch (final UnsupportedEncodingException e) {
+				return Response.error(new ParseError(e));
+			} catch (final JSONException e) {
+				return Response.error(new ParseError(e));
+			}
+		}
 	}
 
 }
