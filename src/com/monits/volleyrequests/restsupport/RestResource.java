@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -161,8 +162,8 @@ public class RestResource<T> {
 	 *            The listener for success.
 	 * @param errListener
 	 *            The listener for errors.
-	 * @param jsonBody
-	 *            The json that you want to send
+	 * @param object
+	 *            The object that you want to send
 	 * @return The GsonRequest with the created request
 	 * @throws IllegalArgumentException
 	 *             In case that the method receive is different from Method.POST
@@ -171,7 +172,7 @@ public class RestResource<T> {
 	public GsonRequest<T> saveObject(final int method,
 			final Map<String, String> resourceParams,
 			final Listener<T> listener, final ErrorListener errListener,
-			final String jsonBody) throws IllegalArgumentException {
+			final T object) throws IllegalArgumentException {
 		if (method != Method.POST && method != Method.PUT) {
 			throw new IllegalArgumentException(
 					"Save object can only be used with POST or PUT method");
@@ -182,9 +183,9 @@ public class RestResource<T> {
 		} else {
 			url = this.resource;
 		}
-		final GsonRequest<T> gsonRequest = new GsonRequest<T>(method,
+		final MaybeGsonRequest<T> gsonRequest = new MaybeGsonRequest<T>(method,
 				this.hostAndPort + url, this.gson, clazz, listener,
-				errListener, jsonBody);
+				errListener, object);
 
 		return gsonRequest;
 	}
@@ -204,8 +205,8 @@ public class RestResource<T> {
 	 *            The listener for success.
 	 * @param errListener
 	 *            The listener for errors.
-	 * @param jsonBody
-	 *            The json that you want to send
+	 * @param object
+	 *            The object that you want to send
 	 * @return The GsonRequest with the created request
 	 * @throws IllegalArgumentException
 	 *             In case that the method receive is different from Method.POST
@@ -214,15 +215,15 @@ public class RestResource<T> {
 	public GsonRequest<T> saveObject(final int method,
 			final Map<String, String> resourceParams,
 			final Map<String, String> extraParams, final Listener<T> listener,
-			final ErrorListener errListener, final String jsonBody) throws IllegalArgumentException {
+			final ErrorListener errListener, final T object) throws IllegalArgumentException {
 		if (method != Method.POST && method != Method.PUT) {
 			throw new IllegalArgumentException(
 					"Save object can only be used with POST or PUT method");
 		}
 		final String url = generateSaveWithQuery(resourceParams, extraParams);
-		final GsonRequest<T> gsonRequest = new GsonRequest<T>(method,
+		final MaybeGsonRequest<T> gsonRequest = new MaybeGsonRequest<T>(method,
 				this.hostAndPort + url, this.gson, this.clazz, listener,
-				errListener, jsonBody);
+				errListener, object);
 
 		return gsonRequest;
 	}
@@ -387,6 +388,32 @@ public class RestResource<T> {
 			} catch (final JSONException e) {
 				return Response.error(new ParseError(e));
 			}
+		}
+	}
+
+
+	/**
+	 * Class to manage status code 201 when saving an object.
+	 * @author fpredassi
+	 *
+	 * @param <T>
+	 */
+	private static class MaybeGsonRequest<T> extends GsonRequest<T> {
+		private final T object;
+
+		public MaybeGsonRequest(final int method, final String url, final Gson gson,
+				final Type clazz, final Listener<T> listener, final ErrorListener errListener,
+				final T object) {
+			super(method, url, gson, clazz, listener, errListener, gson.toJson(object, clazz));
+			this.object = object;
+		}
+
+		@Override
+		protected Response<T> parseNetworkResponse(final NetworkResponse response) {
+			if (response.statusCode == HttpStatus.SC_CREATED) {
+				return Response.success(object, HttpHeaderParser.parseCacheHeaders(response));
+			}
+			return super.parseNetworkResponse(response);
 		}
 	}
 
