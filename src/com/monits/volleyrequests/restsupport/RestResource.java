@@ -20,9 +20,12 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.http.HttpStatus;
 import org.json.JSONArray;
@@ -53,6 +56,10 @@ import com.monits.volleyrequests.network.request.GsonRequest;
  *
  */
 public class RestResource<T> {
+	private static final String PARAMETERS_REGEX = "/(:([^/]+))";
+	private static final String REMOVE_MULTIPLE_SLASH = "\\/{2,}";
+	private static final String REMOVE_FINAL_SLASH = "\\/$";
+	private static final Pattern PATTERN = Pattern.compile(PARAMETERS_REGEX);
 	private final String resource;
 	private final Class<T> clazz;
 	private final String hostAndPort;
@@ -85,6 +92,33 @@ public class RestResource<T> {
 	 *            in the url resource. The key of the map must be the name of
 	 *            the parameter in the url. Example, url = "/user/:userId" and
 	 *            the map must contains {"userId", "123}
+	 * @param queryParams
+	 * 			  A Map with the parameters that must be in the query string
+	 * @param listener
+	 *            The listener for success.
+	 * @param errListener
+	 *            The listener for errors.
+	 * @return The GsonRequest with the created request
+	 */
+	public GsonRequest<T> getObject(final Map<String, String> resourceParams,
+			final Map<String, String> queryParams, final Listener<T> listener, 
+			final ErrorListener errListener) {
+		final String url = generateFullUrl(resourceParams, queryParams);
+		final GsonRequest<T> gsonRequest = new GsonRequest<T>(Method.GET,
+				this.hostAndPort + url, this.gson, this.clazz, listener, errListener,
+				null);
+
+		return gsonRequest;
+	}
+	
+	/**
+	 * Create the GsonRequest for a GET request from the resource.
+	 *
+	 * @param resourceParams
+	 *            A Map with the value of the parameters that must be replaced
+	 *            in the url resource. The key of the map must be the name of
+	 *            the parameter in the url. Example, url = "/user/:userId" and
+	 *            the map must contains {"userId", "123}
 	 * @param listener
 	 *            The listener for success.
 	 * @param errListener
@@ -93,19 +127,48 @@ public class RestResource<T> {
 	 */
 	public GsonRequest<T> getObject(final Map<String, String> resourceParams,
 			final Listener<T> listener, final ErrorListener errListener) {
-		final String url;
-		if (resourceParams != null) {
-			url = replaceValuesInResource(resourceParams);
-		} else {
-			url = this.resource;
-		}
-		final GsonRequest<T> gsonRequest = new GsonRequest<T>(Method.GET,
-				this.hostAndPort + url, this.gson, this.clazz, listener, errListener,
-				null);
-
-		return gsonRequest;
+		return getObject(resourceParams, null, listener, errListener);
 	}
+	
 
+	/**
+	 * Create the GsonRequest for a GET request and give a request for a
+	 * collection. Example: If your resource is /user/:userId this method create
+	 * the url /user or if your resource is /user/:userId/card/:cardId, the new
+	 * url is /user/123/card. We need to use guava TypeToken because
+	 * Gson.TypeToken cannot accept TypeToken<List<T>>. Until Gson update this
+	 * we will use guava
+	 *
+	 * @param resourceParams
+	 *            A Map with the value of the parameters that must be replaced
+	 *            in the url resource. The key of the map must be the name of
+	 *            the parameter in the url. Example, url = "/user/:userId" and
+	 *            the map must contains {"userId", "123}
+	 * @param queryParams
+	 * 			  A Map with the parameters that must be in the query string
+	 * @param listener
+	 *            The listener for success.getAllResource
+	 * @param errListener
+	 *            The listener for errors.
+	 * @return The JSONArrayGsonRequest with the created request
+	 */
+	public GsonRequest<List<T>> getAll(final Map<String, String> resourceParams,
+			final Map<String, String> queryParams, final Listener<List<T>> listener, 
+			final ErrorListener errListener) {
+
+		final String url = generateFullUrl(resourceParams, queryParams);
+
+		if (elementsKey != null) {
+			return new JSONArrayGsonRequest<List<T>>(
+					Method.GET, this.hostAndPort + url, this.gson, createListTypeToken().getType(),
+					listener, errListener, null, elementsKey);
+		}
+
+		return new GsonRequest<List<T>>(
+				Method.GET, this.hostAndPort + url, this.gson, createListTypeToken().getType(),
+				listener, errListener, null);
+	}
+	
 	/**
 	 * Create the GsonRequest for a GET request and give a request for a
 	 * collection. Example: If your resource is /user/:userId this method create
@@ -127,25 +190,7 @@ public class RestResource<T> {
 	 */
 	public GsonRequest<List<T>> getAll(final Map<String, String> resourceParams,
 			final Listener<List<T>> listener, final ErrorListener errListener) {
-
-		final String realResource;
-
-		if (resourceParams != null) {
-			realResource = replaceValuesInResource(resourceParams);
-		} else {
-			realResource = this.resource;
-		}
-
-		final String url = getAllResource(realResource);
-		if (elementsKey != null) {
-			return new JSONArrayGsonRequest<List<T>>(
-					Method.GET, this.hostAndPort + url, this.gson, createListTypeToken().getType(),
-					listener, errListener, null, elementsKey);
-		}
-
-		return new GsonRequest<List<T>>(
-				Method.GET, this.hostAndPort + url, this.gson, createListTypeToken().getType(),
-				listener, errListener, null);
+		return getAll(resourceParams, null, listener, errListener);
 	}
 
 	/**
@@ -173,21 +218,7 @@ public class RestResource<T> {
 			final Map<String, String> resourceParams,
 			final Listener<T> listener, final ErrorListener errListener,
 			final T object) throws IllegalArgumentException {
-		if (method != Method.POST && method != Method.PUT) {
-			throw new IllegalArgumentException(
-					"Save object can only be used with POST or PUT method");
-		}
-		final String url;
-		if (resourceParams != null) {
-			url = replaceValuesInResource(resourceParams);
-		} else {
-			url = this.resource;
-		}
-		final MaybeGsonRequest<T> gsonRequest = new MaybeGsonRequest<T>(method,
-				this.hostAndPort + url, this.gson, clazz, listener,
-				errListener, object);
-
-		return gsonRequest;
+		return saveObject(method, resourceParams, null, listener, errListener, object);
 	}
 
 	/**
@@ -199,7 +230,7 @@ public class RestResource<T> {
 	 *            in the url resource. The key of the map must be the name of
 	 *            the parameter in the url. Example, url = "/user/:userId" and
 	 *            the map must contains {"userId", "123}
-	 * @param extraParams
+	 * @param queryParams
 	 *            A Map with the parameters that must be in the query string.
 	 * @param listener
 	 *            The listener for success.
@@ -214,13 +245,13 @@ public class RestResource<T> {
 	 */
 	public GsonRequest<T> saveObject(final int method,
 			final Map<String, String> resourceParams,
-			final Map<String, String> extraParams, final Listener<T> listener,
+			final Map<String, String> queryParams, final Listener<T> listener,
 			final ErrorListener errListener, final T object) throws IllegalArgumentException {
 		if (method != Method.POST && method != Method.PUT) {
 			throw new IllegalArgumentException(
 					"Save object can only be used with POST or PUT method");
 		}
-		final String url = generateSaveWithQuery(resourceParams, extraParams);
+		final String url = generateFullUrl(resourceParams, queryParams);
 		final MaybeGsonRequest<T> gsonRequest = new MaybeGsonRequest<T>(method,
 				this.hostAndPort + url, this.gson, this.clazz, listener,
 				errListener, object);
@@ -247,36 +278,35 @@ public class RestResource<T> {
 		return new GsonRequest<T>(Method.DELETE, this.hostAndPort + resource,
 				this.gson, clazz, listener, errListener, null);
 	}
-
+	
 	/**
-	 * Add the query string into the url
+	 * Replace the resource parameters in the url and if the queryParams is
+	 * not null and not empty, add the query string to the URL
 	 *
 	 * @param resourceParams
 	 *            A Map with the value of the parameters that must be replaced
 	 *            in the url resource. The key of the map must be the name of
 	 *            the parameter in the url. Example, url = "/user/:userId" and
 	 *            the map must contains {"userId", "123}
-	 * @param extraParams
+	 * @param queryParams
 	 *            A Map with the parameters that must be in the query string.
 	 * @return The url
 	 */
-	private String generateSaveWithQuery(
+	private String generateFullUrl(
 			final Map<String, String> resourceParams,
-			final Map<String, String> extraParams) {
-		String url = this.resource;
-		if (resourceParams != null) {
-			url = replaceValuesInResource(resourceParams);
-		}
-		if (extraParams != null && !extraParams.isEmpty()) {
+			final Map<String, String> queryParams) {
+		final Map<String, String> map = resourceParams == null 
+				? Collections.<String, String>emptyMap() : resourceParams;
+		String url = replaceValuesInResource(map);
+		if (queryParams != null && !queryParams.isEmpty()) {
 			final StringBuilder builder = new StringBuilder();
 			builder.append(url).append("?");
-			int hashMapIndex = 1;
-			for (final Entry<String, String> entry : extraParams.entrySet()) {
+			int elementsLeft = queryParams.size();
+			for (final Entry<String, String> entry : queryParams.entrySet()) {
 				builder.append(entry.getKey()).append("=")
 						.append(entry.getValue());
-				if (hashMapIndex != extraParams.size()) {
+				if (elementsLeft-- > 0) {
 					builder.append("&");
-					hashMapIndex++;
 				}
 			}
 			url = builder.toString();
@@ -284,26 +314,6 @@ public class RestResource<T> {
 		return url;
 	}
 
-	/**
-	 * Create the url for get a collection
-	 *
-	 * @param realResource
-	 *            The resource from where you want to get the collection
-	 * @return The url
-	 */
-	private String getAllResource(final String realResource) {
-		final String[] resourcePath = realResource.split("/");
-		final StringBuilder url = new StringBuilder();
-		for (int i = 0; i < resourcePath.length; i++) {
-			if (i < resourcePath.length - 1
-					|| (i == resourcePath.length - 1 && !resourcePath[i]
-							.contains(":"))) {
-				url.append(resourcePath[i]);
-				url.append("/");
-			}
-		}
-		return url.toString();
-	}
 
 	/**
 	 *
@@ -316,12 +326,16 @@ public class RestResource<T> {
 	 *            the map must contains {"userId", "123}
 	 * @return The url
 	 */
-	private String replaceValuesInResource(
-			final Map<String, String> resourceParams) {
+	private String replaceValuesInResource(final Map<String, String> resourceParams) {
 		String url = resource;
-		for (final Entry<String, String> entry : resourceParams.entrySet()) {
-			url = url.replace(":" + entry.getKey(), entry.getValue());
+		final Matcher matcher = PATTERN.matcher(url);
+		while (matcher.find()) {
+			final String mapValue = resourceParams.get(matcher.group(2));
+			final String value = mapValue == null ? "" : mapValue;
+			url = url.replace(matcher.group(1), value);
 		}
+		url = url.replaceAll(REMOVE_MULTIPLE_SLASH, "/");
+		url = url.replaceAll(REMOVE_FINAL_SLASH, "");
 		return url;
 	}
 
