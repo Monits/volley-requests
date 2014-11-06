@@ -101,7 +101,7 @@ public class RestResource<T> {
 	 * @return The GsonRequest with the created request
 	 */
 	public GsonRequest<T> getObject(final Map<String, String> resourceParams,
-			final Map<String, String> queryParams, final Listener<T> listener, 
+			final Map<String, String> queryParams, final Listener<T> listener,
 			final ErrorListener errListener) {
 		final String url = generateFullUrl(resourceParams, queryParams);
 		final GsonRequest<T> gsonRequest = new GsonRequest<T>(Method.GET,
@@ -110,7 +110,7 @@ public class RestResource<T> {
 
 		return gsonRequest;
 	}
-	
+
 	/**
 	 * Create the GsonRequest for a GET request from the resource.
 	 *
@@ -129,7 +129,7 @@ public class RestResource<T> {
 			final Listener<T> listener, final ErrorListener errListener) {
 		return getObject(resourceParams, null, listener, errListener);
 	}
-	
+
 
 	/**
 	 * Create the GsonRequest for a GET request and give a request for a
@@ -153,7 +153,7 @@ public class RestResource<T> {
 	 * @return The JSONArrayGsonRequest with the created request
 	 */
 	public GsonRequest<List<T>> getAll(final Map<String, String> resourceParams,
-			final Map<String, String> queryParams, final Listener<List<T>> listener, 
+			final Map<String, String> queryParams, final Listener<List<T>> listener,
 			final ErrorListener errListener) {
 
 		final String url = generateFullUrl(resourceParams, queryParams);
@@ -168,7 +168,7 @@ public class RestResource<T> {
 				Method.GET, this.hostAndPort + url, this.gson, createListTypeToken().getType(),
 				listener, errListener, null);
 	}
-	
+
 	/**
 	 * Create the GsonRequest for a GET request and give a request for a
 	 * collection. Example: If your resource is /user/:userId this method create
@@ -262,6 +262,20 @@ public class RestResource<T> {
 	/**
 	 * Create the GsonRequest for a DELETE request from the resource.
 	 *
+	 * @param listener
+	 *            The listener for success.
+	 * @param errListener
+	 *            The listener for errors.
+	 * @return The GsonRequest with the created request
+	 */
+	public GsonRequest<T> deleteObject(final Listener<T> listener,
+			final ErrorListener errListener) {
+		return deleteObject(null, listener, errListener);
+	}
+
+	/**
+	 * Create the GsonRequest for a DELETE request from the resource.
+	 *
 	 * @param resourceParams
 	 *            A Map with the value of the parameters that must be replaced
 	 *            in the url resource. The key of the map must be the name of
@@ -273,12 +287,13 @@ public class RestResource<T> {
 	 *            The listener for errors.
 	 * @return The GsonRequest with the created request
 	 */
-	public GsonRequest<T> deleteObject(final Listener<T> listener,
-			final ErrorListener errListener) {
-		return new GsonRequest<T>(Method.DELETE, this.hostAndPort + resource,
+	public GsonRequest<T> deleteObject(final Map<String, String> resourceParams,
+			final Listener<T> listener, final ErrorListener errListener) {
+		final String url = generateFullUrl(resourceParams, null);
+		return new GsonRequest<T>(Method.DELETE, this.hostAndPort + url,
 				this.gson, clazz, listener, errListener, null);
 	}
-	
+
 	/**
 	 * Replace the resource parameters in the url and if the queryParams is
 	 * not null and not empty, add the query string to the URL
@@ -295,7 +310,7 @@ public class RestResource<T> {
 	private String generateFullUrl(
 			final Map<String, String> resourceParams,
 			final Map<String, String> queryParams) {
-		final Map<String, String> map = resourceParams == null 
+		final Map<String, String> map = resourceParams == null
 				? Collections.<String, String>emptyMap() : resourceParams;
 		String url = replaceValuesInResource(map);
 		if (queryParams != null && !queryParams.isEmpty()) {
