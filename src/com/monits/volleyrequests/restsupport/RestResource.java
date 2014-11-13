@@ -336,7 +336,7 @@ public class RestResource<T> {
 			for (final Entry<String, String> entry : queryParams.entrySet()) {
 				builder.append(entry.getKey()).append("=")
 						.append(entry.getValue());
-				if (elementsLeft-- > 0) {
+				if (--elementsLeft > 0) {
 					builder.append("&");
 				}
 			}
