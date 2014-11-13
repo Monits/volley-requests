@@ -16,7 +16,6 @@
 
 package com.monits.volleyrequests.restsupport;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,18 +26,12 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.http.HttpStatus;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.android.volley.NetworkResponse;
-import com.android.volley.ParseError;
+import com.android.volley.JSONArrayRequestDecorator;
+import com.android.volley.MaybeRequestDecorator;
+import com.android.volley.Request;
 import com.android.volley.Request.Method;
-import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
-import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -63,8 +56,9 @@ public class RestResource<T> {
 	private final String resource;
 	private final Class<T> clazz;
 	private final String hostAndPort;
-	private final Gson gson;
+	protected final Gson gson;
 	private String elementsKey = "elements";
+	private final Type listTypeToken;
 
 	/**
 	 * Create a new instance of RestResource
@@ -82,6 +76,37 @@ public class RestResource<T> {
 		this.clazz = clazz;
 		this.hostAndPort = prepareHostURL(url);
 		this.gson = gson;
+		this.listTypeToken = new TypeToken<List<T>>() {
+		} .where(new TypeParameter<T>() {
+		}, TypeToken.of(clazz)).getType();
+	}
+
+	/**
+	 * Create request to use all methods. The default implementation return a
+	 * the corresponding GsonRequest
+	 *
+	 * @param method
+	 *            The method for the request
+	 * @param url
+	 *            The url of the request
+	 * @param listener
+	 *            The success listener
+	 * @param errListener
+	 *            The error listener
+	 * @param object
+	 *            The object you want to save in a POST or PUT method
+	 * @param queryParams
+	 *            The query parameters
+	 *
+	 * @return
+	 */
+	protected <K> Request<K> createRequest(final int method, final String url,
+			final Type type, final Listener<K> listener,
+			final ErrorListener errListener,
+			final Map<String, String> queryParams, final T object) {
+		final String jsonBody  = object != null ? gson.toJson(object) : null;
+		return new GsonRequest<K>(method, url, this.gson,
+				type, listener, errListener, jsonBody);
 	}
 
 	/**
@@ -93,22 +118,19 @@ public class RestResource<T> {
 	 *            the parameter in the url. Example, url = "/user/:userId" and
 	 *            the map must contains {"userId", "123}
 	 * @param queryParams
-	 * 			  A Map with the parameters that must be in the query string
+	 *            A Map with the parameters that must be in the query string
 	 * @param listener
 	 *            The listener for success.
 	 * @param errListener
 	 *            The listener for errors.
 	 * @return The GsonRequest with the created request
 	 */
-	public GsonRequest<T> getObject(final Map<String, String> resourceParams,
+	public Request<T> getObject(final Map<String, String> resourceParams,
 			final Map<String, String> queryParams, final Listener<T> listener,
 			final ErrorListener errListener) {
 		final String url = generateFullUrl(resourceParams, queryParams);
-		final GsonRequest<T> gsonRequest = new GsonRequest<T>(Method.GET,
-				this.hostAndPort + url, this.gson, this.clazz, listener, errListener,
-				null);
-
-		return gsonRequest;
+		return createRequest(Method.GET, this.hostAndPort + url, this.clazz,
+				listener, errListener, queryParams, null);
 	}
 
 	/**
@@ -125,12 +147,11 @@ public class RestResource<T> {
 	 *            The listener for errors.
 	 * @return The GsonRequest with the created request
 	 */
-	public GsonRequest<T> getObject(final Map<String, String> resourceParams,
+	public Request<T> getObject(final Map<String, String> resourceParams,
 			final Listener<T> listener, final ErrorListener errListener) {
 		return getObject(resourceParams, null, listener, errListener);
 	}
 
-
 	/**
 	 * Create the GsonRequest for a GET request and give a request for a
 	 * collection. Example: If your resource is /user/:userId this method create
@@ -145,28 +166,23 @@ public class RestResource<T> {
 	 *            the parameter in the url. Example, url = "/user/:userId" and
 	 *            the map must contains {"userId", "123}
 	 * @param queryParams
-	 * 			  A Map with the parameters that must be in the query string
+	 *            A Map with the parameters that must be in the query string
 	 * @param listener
 	 *            The listener for success.getAllResource
 	 * @param errListener
 	 *            The listener for errors.
 	 * @return The JSONArrayGsonRequest with the created request
 	 */
-	public GsonRequest<List<T>> getAll(final Map<String, String> resourceParams,
-			final Map<String, String> queryParams, final Listener<List<T>> listener,
-			final ErrorListener errListener) {
+	public Request<List<T>> getAll(final Map<String, String> resourceParams,
+			final Map<String, String> queryParams,
+			final Listener<List<T>> listener, final ErrorListener errListener) {
 
 		final String url = generateFullUrl(resourceParams, queryParams);
 
-		if (elementsKey != null) {
-			return new JSONArrayGsonRequest<List<T>>(
-					Method.GET, this.hostAndPort + url, this.gson, createListTypeToken().getType(),
-					listener, errListener, null, elementsKey);
-		}
-
-		return new GsonRequest<List<T>>(
-				Method.GET, this.hostAndPort + url, this.gson, createListTypeToken().getType(),
-				listener, errListener, null);
+		final Request<List<T>> request = createRequest(Method.GET, this.hostAndPort + url,
+				listTypeToken, listener, errListener, queryParams, null);
+		return new JSONArrayRequestDecorator<List<T>>(request, gson, Method.GET,
+				url, listener, errListener, null, elementsKey);
 	}
 
 	/**
@@ -188,7 +204,7 @@ public class RestResource<T> {
 	 *            The listener for errors.
 	 * @return The JSONArrayGsonRequest with the created request
 	 */
-	public GsonRequest<List<T>> getAll(final Map<String, String> resourceParams,
+	public Request<List<T>> getAll(final Map<String, String> resourceParams,
 			final Listener<List<T>> listener, final ErrorListener errListener) {
 		return getAll(resourceParams, null, listener, errListener);
 	}
@@ -214,11 +230,12 @@ public class RestResource<T> {
 	 *             In case that the method receive is different from Method.POST
 	 *             or Method.PUT
 	 */
-	public GsonRequest<T> saveObject(final int method,
+	public Request<T> saveObject(final int method,
 			final Map<String, String> resourceParams,
 			final Listener<T> listener, final ErrorListener errListener,
 			final T object) throws IllegalArgumentException {
-		return saveObject(method, resourceParams, null, listener, errListener, object);
+		return saveObject(method, resourceParams, null, listener, errListener,
+				object);
 	}
 
 	/**
@@ -243,20 +260,20 @@ public class RestResource<T> {
 	 *             In case that the method receive is different from Method.POST
 	 *             or Method.PUT
 	 */
-	public GsonRequest<T> saveObject(final int method,
+	public Request<T> saveObject(final int method,
 			final Map<String, String> resourceParams,
 			final Map<String, String> queryParams, final Listener<T> listener,
-			final ErrorListener errListener, final T object) throws IllegalArgumentException {
+			final ErrorListener errListener, final T object)
+		throws IllegalArgumentException {
 		if (method != Method.POST && method != Method.PUT) {
 			throw new IllegalArgumentException(
 					"Save object can only be used with POST or PUT method");
 		}
 		final String url = generateFullUrl(resourceParams, queryParams);
-		final MaybeGsonRequest<T> gsonRequest = new MaybeGsonRequest<T>(method,
-				this.hostAndPort + url, this.gson, this.clazz, listener,
-				errListener, object);
-
-		return gsonRequest;
+		final Request<T> request = createRequest(method, this.hostAndPort + url, this.clazz,
+				listener, errListener, queryParams, object);
+		return new MaybeRequestDecorator<T>(request, gson, method, url, listener,
+				errListener, null, object);
 	}
 
 	/**
@@ -268,7 +285,7 @@ public class RestResource<T> {
 	 *            The listener for errors.
 	 * @return The GsonRequest with the created request
 	 */
-	public GsonRequest<T> deleteObject(final Listener<T> listener,
+	public Request<T> deleteObject(final Listener<T> listener,
 			final ErrorListener errListener) {
 		return deleteObject(null, listener, errListener);
 	}
@@ -287,16 +304,16 @@ public class RestResource<T> {
 	 *            The listener for errors.
 	 * @return The GsonRequest with the created request
 	 */
-	public GsonRequest<T> deleteObject(final Map<String, String> resourceParams,
+	public Request<T> deleteObject(final Map<String, String> resourceParams,
 			final Listener<T> listener, final ErrorListener errListener) {
 		final String url = generateFullUrl(resourceParams, null);
-		return new GsonRequest<T>(Method.DELETE, this.hostAndPort + url,
-				this.gson, clazz, listener, errListener, null);
+		return createRequest(Method.DELETE, this.hostAndPort + url, this.clazz,
+				listener, errListener, Collections.<String, String>emptyMap(), null);
 	}
 
 	/**
-	 * Replace the resource parameters in the url and if the queryParams is
-	 * not null and not empty, add the query string to the URL
+	 * Replace the resource parameters in the url and if the queryParams is not
+	 * null and not empty, add the query string to the URL
 	 *
 	 * @param resourceParams
 	 *            A Map with the value of the parameters that must be replaced
@@ -307,11 +324,10 @@ public class RestResource<T> {
 	 *            A Map with the parameters that must be in the query string.
 	 * @return The url
 	 */
-	private String generateFullUrl(
-			final Map<String, String> resourceParams,
+	private String generateFullUrl(final Map<String, String> resourceParams,
 			final Map<String, String> queryParams) {
-		final Map<String, String> map = resourceParams == null
-				? Collections.<String, String>emptyMap() : resourceParams;
+		final Map<String, String> map = resourceParams == null ? Collections
+				.<String, String>emptyMap() : resourceParams;
 		String url = replaceValuesInResource(map);
 		if (queryParams != null && !queryParams.isEmpty()) {
 			final StringBuilder builder = new StringBuilder();
@@ -329,7 +345,6 @@ public class RestResource<T> {
 		return url;
 	}
 
-
 	/**
 	 *
 	 * Replace the params value into the resource
@@ -341,7 +356,8 @@ public class RestResource<T> {
 	 *            the map must contains {"userId", "123}
 	 * @return The url
 	 */
-	private String replaceValuesInResource(final Map<String, String> resourceParams) {
+	private String replaceValuesInResource(
+			final Map<String, String> resourceParams) {
 		String url = resource;
 		final Matcher matcher = PATTERN.matcher(url);
 		while (matcher.find()) {
@@ -357,7 +373,8 @@ public class RestResource<T> {
 	/**
 	 * Prepare the authority with the corresponding port of the url.
 	 *
-	 * @param url The url for the request
+	 * @param url
+	 *            The url for the request
 	 * @return {protocol}://{authority}
 	 */
 	private String prepareHostURL(final URL url) {
@@ -368,82 +385,13 @@ public class RestResource<T> {
 	}
 
 	/**
-	 * Create the TypeToken for a list of generic, using guava TypeToken
-	 * @return The TypeToken using where method
-	 */
-	private TypeToken<List<T>> createListTypeToken() {
-		return new TypeToken<List<T>>() {}.where(new TypeParameter<T>() {
-		}, TypeToken.of(clazz));
-	}
-
-	/**
 	 * Sets the key for the JSON that retrieves all items of a collection.
-	 * @param elementsKey the key used in the JSON response. If null, it is assumed that the JSON array comes alone
-	 * without being wrapped by an object.
+	 *
+	 * @param elementsKey
+	 *            the key used in the JSON response. If null, it is assumed that
+	 *            the JSON array comes alone without being wrapped by an object.
 	 */
 	public void setElementsKey(final String elementsKey) {
 		this.elementsKey = elementsKey;
 	}
-
-
-	/**
-	 * Class to parse a list of all items in a collection from a NetworkResponse depending on a key.
-	 * @author fpredassi
-	 *
-	 * @param <T>
-	 */
-	private static class JSONArrayGsonRequest<T> extends GsonRequest<T> {
-		private final String elementsKey;
-
-		public JSONArrayGsonRequest(final int method, final String url, final Gson gson,
-				final Type clazz, final Listener<T> listener, final ErrorListener errListener,
-				final String jsonBody, final String elementsKey) {
-			super(method, url, gson, clazz, listener, errListener, jsonBody);
-			this.elementsKey = elementsKey;
-		}
-
-		@Override
-		protected Response<T> parseNetworkResponse(final NetworkResponse response) {
-			try {
-				final String headersCharset = HttpHeaderParser.parseCharset(response.headers);
-				final String json = new String(response.data, headersCharset);
-				final JSONObject object = new JSONObject(json);
-				final JSONArray array = object.getJSONArray(elementsKey);
-				final byte[] data = array.toString().getBytes(headersCharset);
-				final NetworkResponse responseJsonArray = new NetworkResponse(data, response.headers);
-				return super.parseNetworkResponse(responseJsonArray);
-			} catch (final UnsupportedEncodingException e) {
-				return Response.error(new ParseError(e));
-			} catch (final JSONException e) {
-				return Response.error(new ParseError(e));
-			}
-		}
-	}
-
-
-	/**
-	 * Class to manage status code 201 when saving an object.
-	 * @author fpredassi
-	 *
-	 * @param <T>
-	 */
-	private static class MaybeGsonRequest<T> extends GsonRequest<T> {
-		private final T object;
-
-		public MaybeGsonRequest(final int method, final String url, final Gson gson,
-				final Type clazz, final Listener<T> listener, final ErrorListener errListener,
-				final T object) {
-			super(method, url, gson, clazz, listener, errListener, gson.toJson(object, clazz));
-			this.object = object;
-		}
-
-		@Override
-		protected Response<T> parseNetworkResponse(final NetworkResponse response) {
-			if (response.statusCode == HttpStatus.SC_CREATED) {
-				return Response.success(object, HttpHeaderParser.parseCacheHeaders(response));
-			}
-			return super.parseNetworkResponse(response);
-		}
-	}
-
 }
