@@ -40,7 +40,10 @@ public abstract class RequestDecorator<T> extends JsonRfcCompliantListenableRequ
 
 	@Override
 	public Request<?> setRetryPolicy(final RetryPolicy retryPolicy) {
-		return request.setRetryPolicy(retryPolicy);
+		if (request != null) {
+			request.setRetryPolicy(retryPolicy);
+		}
+		return super.setRetryPolicy(retryPolicy);
 	}
 
 	@Override
