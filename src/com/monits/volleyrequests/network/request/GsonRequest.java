@@ -53,5 +53,4 @@ public class GsonRequest<T> extends JsonRfcCompliantListenableRequest<T> {
             return Response.error(new ParseError(e));
         }
 	}
-
 }

@@ -2,10 +2,7 @@ package com.android.volley;
 
 import org.apache.http.HttpStatus;
 
-import com.android.volley.Response.ErrorListener;
-import com.android.volley.Response.Listener;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.google.gson.Gson;
 
 /**
  * Class to parse a list of all items in a collection from a NetworkResponse
@@ -18,10 +15,9 @@ import com.google.gson.Gson;
 public class MaybeRequestDecorator<T> extends RequestDecorator<T> {
 	private final T object;
 
-	public MaybeRequestDecorator(final Request<T> request, final Gson gson,
-			final int method, final String url, final Listener<T> listener,
-			final ErrorListener errListener, final String jsonBody, final T object) {
-		super(request, gson, method, url, listener, errListener, jsonBody);
+	public MaybeRequestDecorator(final Request<T> request, final int method,
+			final String url, final T object) {
+		super(request, method, url);
 		this.object = object;
 	}
 
@@ -34,4 +30,7 @@ public class MaybeRequestDecorator<T> extends RequestDecorator<T> {
 		return super.parseNetworkResponse(response);
 	}
 
+	public T getObject() {
+		return object;
+	}
 }

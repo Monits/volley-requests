@@ -3,19 +3,17 @@ package com.android.volley;
 import java.util.Map;
 
 import com.android.volley.Cache.Entry;
-import com.android.volley.Response.ErrorListener;
-import com.android.volley.Response.Listener;
-import com.google.gson.Gson;
-import com.monits.volleyrequests.network.request.JsonRfcCompliantListenableRequest;
 
-public abstract class RequestDecorator<T> extends JsonRfcCompliantListenableRequest<T> {
+public abstract class RequestDecorator<T> extends Request<T> {
 	private final Request<T> request;
 
-	public RequestDecorator(final Request<T> request, final Gson gson,
-			final int method, final String url, final Listener<T> listener,
-			final ErrorListener errListener, final String jsonBody) {
-		super(method, url, listener, errListener, jsonBody);
+	public RequestDecorator(final Request<T> request, final int method, final String url) {
+		super(method, url, null);
 		this.request = request;
+	}
+
+	public Request<T> getRequest() {
+		return request;
 	}
 
 	@Override
@@ -151,6 +149,12 @@ public abstract class RequestDecorator<T> extends JsonRfcCompliantListenableRequ
 	protected Response<T> parseNetworkResponse(final NetworkResponse response) {
 		return request.parseNetworkResponse(response);
 	}
+
+	@Override
+	protected void deliverResponse(final T response) {
+		request.deliverResponse(response);
+	}
+
 
 
 }

@@ -6,10 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.android.volley.Response.ErrorListener;
-import com.android.volley.Response.Listener;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.google.gson.Gson;
 
 /**
  * Class to parse a list of all items in a collection from a NetworkResponse
@@ -22,11 +19,9 @@ import com.google.gson.Gson;
 public class JSONArrayRequestDecorator<T> extends RequestDecorator<T> {
 	private final String elementsKey;
 
-	public JSONArrayRequestDecorator(final Request<T> request, final Gson gson,
-			final int method, final String url, final Listener<T> listener,
-			final ErrorListener errListener, final String jsonBody,
-			final String elementsKey) {
-		super(request, gson, method, url, listener, errListener, jsonBody);
+	public JSONArrayRequestDecorator(final Request<T> request, final int method,
+			final String url, final String elementsKey) {
+		super(request, method, url);
 		this.elementsKey = elementsKey;
 	}
 
@@ -47,6 +42,10 @@ public class JSONArrayRequestDecorator<T> extends RequestDecorator<T> {
 		} catch (final JSONException e) {
 			return Response.error(new ParseError(e));
 		}
+	}
+
+	public String getElementsKey() {
+		return elementsKey;
 	}
 
 }

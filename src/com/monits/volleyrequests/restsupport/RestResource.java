@@ -129,8 +129,10 @@ public class RestResource<T> {
 			final Map<String, String> queryParams, final Listener<T> listener,
 			final ErrorListener errListener) {
 		final String url = generateFullUrl(resourceParams, queryParams);
-		return createRequest(Method.GET, this.hostAndPort + url, this.clazz,
+		final Request<T> request = createRequest(Method.GET, this.hostAndPort + url, this.clazz,
 				listener, errListener, queryParams, null);
+		configureRequest(request);
+		return request;
 	}
 
 	/**
@@ -181,8 +183,10 @@ public class RestResource<T> {
 
 		final Request<List<T>> request = createRequest(Method.GET, this.hostAndPort + url,
 				listTypeToken, listener, errListener, queryParams, null);
-		return new JSONArrayRequestDecorator<List<T>>(request, gson, Method.GET,
-				url, listener, errListener, null, elementsKey);
+		final JSONArrayRequestDecorator<List<T>> jsonRequest = new JSONArrayRequestDecorator<List<T>>(request,
+				Method.GET, url, elementsKey);
+		configureRequest(jsonRequest);
+		return jsonRequest;
 	}
 
 	/**
@@ -272,8 +276,10 @@ public class RestResource<T> {
 		final String url = generateFullUrl(resourceParams, queryParams);
 		final Request<T> request = createRequest(method, this.hostAndPort + url, this.clazz,
 				listener, errListener, queryParams, object);
-		return new MaybeRequestDecorator<T>(request, gson, method, url, listener,
-				errListener, null, object);
+		final MaybeRequestDecorator<T> maybeRequestDecorator = new MaybeRequestDecorator<T>(request,
+				method, url, object);
+		configureRequest(maybeRequestDecorator);
+		return maybeRequestDecorator;
 	}
 
 	/**
@@ -307,8 +313,10 @@ public class RestResource<T> {
 	public Request<T> deleteObject(final Map<String, String> resourceParams,
 			final Listener<T> listener, final ErrorListener errListener) {
 		final String url = generateFullUrl(resourceParams, null);
-		return createRequest(Method.DELETE, this.hostAndPort + url, this.clazz,
+		final Request<T> request = createRequest(Method.DELETE, this.hostAndPort + url, this.clazz,
 				listener, errListener, Collections.<String, String>emptyMap(), null);
+		configureRequest(request);
+		return request;
 	}
 
 	/**
@@ -394,4 +402,15 @@ public class RestResource<T> {
 	public void setElementsKey(final String elementsKey) {
 		this.elementsKey = elementsKey;
 	}
+
+	/**
+	 * The subclasses must override if they want to change attributes
+	 * of the request, like retryPolicy
+	 *
+	 * @param request The request that is going to be modify
+	 */
+	protected void configureRequest(final Request<?> request) {
+
+	}
+
 }
