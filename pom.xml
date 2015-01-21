@@ -1,0 +1,37 @@
+<!--
+  Phony pom, we only use maven for mvn checkstyle:checkstlye / findbugs / pmd, mostly through arc.
+  Gradle's support for these sucks:
+    - checkstyle can't get a remote url for config
+    - findbugs nees plugins to be embedded into the project to be able to use them
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.monits</groupId>
+    <artifactId>volleyrequests</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>volley-requests</name>
+
+    <properties>
+        <maven-checkstyle-plugin.version>2.12.1</maven-checkstyle-plugin.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <build>
+        <sourceDirectory>volley-requests/src/main/java/</sourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${maven-checkstyle-plugin.version}</version>
+                <configuration>
+                    <configLocation>http://static.monits.com/checkstyle.xml</configLocation>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
