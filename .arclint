@@ -5,6 +5,10 @@
             "include": "(\\.java$)",
             "paths": [ "src/main/java" ],
             "aggregate": false
+        },
+        "android": {
+            "type": "AndroidLint",
+            "gradle-modules": [ "volley-requests" ]
         }
     }
 }
