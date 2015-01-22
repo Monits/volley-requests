@@ -3,7 +3,7 @@
         "checkstyle": {
             "type": "checkstyle",
             "include": "(\\.java$)",
-            "paths": [ "src" ],
+            "paths": [ "src/main/java" ],
             "aggregate": false
         }
     }
