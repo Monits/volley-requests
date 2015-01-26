@@ -1,0 +1,9 @@
+<FindBugsFilter>
+    <!-- Android uses it's own annotations, not JSR 305 -->
+    <Match>
+        <Bug pattern="UNKNOWN_NULLNESS_OF_PARAMETER" />
+    </Match>
+    <Match>
+        <Bug pattern="UNKNOWN_NULLNESS_OF_RETURNED_VALUE" />
+    </Match>
+</FindBugsFilter>

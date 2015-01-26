@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven'
+apply plugin: 'findbugs'
 
 version = "1.0.0"
 group = "com.monits"
@@ -39,13 +40,55 @@ dependencies {
     compile 'com.android.support:support-v4:21.0.+'
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'com.google.guava:guava:17.0'
+
+    provided 'com.google.code.findbugs:annotations:3.0.0'
+
+    findbugs 'com.google.code.findbugs:findbugs:3.0.0'
+    findbugs configurations.findbugsPlugins.dependencies
+
+    // To keep everything tidy, we set these apart
+    findbugsPlugins('com.monits:findbugs-plugin:0.1.0-SNAPSHOT') {
+        transitive = false
+    }
+    findbugsPlugins 'com.mebigfatguy.fb-contrib:fb-contrib:6.0.0'
 }
 
 configurations {
     archives {
         extendsFrom configurations.default
     }
+    provided {
+        dependencies.all { dep ->
+            configurations.default.exclude group: dep.group, module: dep.name
+        }
+    }
+    compile.extendsFrom provided
 }
+
+// linters!
+task findbugs(type: FindBugs) {
+    classes = files("$project.buildDir/intermediates/classes/")
+    ignoreFailures = true
+    effort = "max"
+
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    excludeFilter = file("$rootProject.projectDir/config/findbugs/excludeFilter.xml")
+
+    reports {
+        xml {
+            destination "$project.buildDir/reports/findbugs/findbugs.xml"
+            xml.withMessages true
+        }
+    }
+
+    pluginClasspath = project.configurations.findbugsPlugins
+    classpath = project.configurations.compile
+}
+
+check.dependsOn 'findbugs'
 
 // Generate sources
 task sourcesJar(type: Jar) {
