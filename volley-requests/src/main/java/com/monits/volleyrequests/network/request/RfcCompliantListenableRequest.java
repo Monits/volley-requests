@@ -50,7 +50,7 @@ import com.android.volley.Response.Listener;
  * Bare in mind this isn't 100% spec compliant. The cache is not checked before performing the request
  * but it's also used to actually store the response, shall it bring
  *
- * @author Juan Martín Sotuyo Dodero <jmsotuyo@monits.com>
+ * @author Juan Martín Sotuyo Dodero {@literal <jmsotuyo@monits.com>}
  */
 public abstract class RfcCompliantListenableRequest<T> extends ListenableRequest<T> {
 

@@ -70,7 +70,7 @@ public class RestResource<T> {
 	 *            The resourcer that you want to access
 	 * @param clazz
 	 *            The type of the object that the json represents
-	 * @throws MalformedURLException
+	 * @throws MalformedURLException If the given URL is not properly formed.
 	 */
 	public RestResource(@NonNull final String resource, @NonNull final Class<T> clazz,
 					@NonNull final Gson gson) throws MalformedURLException {
@@ -156,12 +156,13 @@ public class RestResource<T> {
 	}
 
 	/**
-	 * Create the GsonRequest for a GET request and give a request for a
-	 * collection. Example: If your resource is /user/:userId this method create
+	 * Create the GsonRequest for a GET request and give a request for a collection.
+	 *
+	 * Example: If your resource is /user/:userId this method create
 	 * the url /user or if your resource is /user/:userId/card/:cardId, the new
-	 * url is /user/123/card. We need to use guava TypeToken because
-	 * Gson.TypeToken cannot accept TypeToken<List<T>>. Until Gson update this
-	 * we will use guava
+	 * url is /user/123/card. We need to use guava {@code TypeToken} because
+	 * {@code Gson.TypeToken} cannot accept {@code TypeToken<List<T>>}. Until Gson update this
+	 * we will use guava.
 	 *
 	 * @param resourceParams
 	 *            A Map with the value of the parameters that must be replaced
@@ -190,11 +191,12 @@ public class RestResource<T> {
 	}
 
 	/**
-	 * Create the GsonRequest for a GET request and give a request for a
-	 * collection. Example: If your resource is /user/:userId this method create
+	 * Create the GsonRequest for a GET request and give a request for a collection.
+	 *
+	 * Example: If your resource is /user/:userId this method create
 	 * the url /user or if your resource is /user/:userId/card/:cardId, the new
-	 * url is /user/123/card. We need to use guava TypeToken because
-	 * Gson.TypeToken cannot accept TypeToken<List<T>>. Until Gson update this
+	 * url is /user/123/card. We need to use guava {@code TypeToken} because
+	 * {@code Gson.TypeToken} cannot accept {@code TypeToken<List<T>>}. Until Gson update this
 	 * we will use guava
 	 *
 	 * @param resourceParams

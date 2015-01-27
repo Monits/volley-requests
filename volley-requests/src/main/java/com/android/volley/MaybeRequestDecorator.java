@@ -12,7 +12,7 @@ import com.android.volley.toolbox.HttpHeaderParser;
  *
  * @author fpredassi
  *
- * @param <T>
+ * @param <T> The type of the request being decorated.
  */
 public class MaybeRequestDecorator<T> extends RequestDecorator<T> {
 	private final T object;

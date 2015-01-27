@@ -16,7 +16,7 @@ import com.android.volley.toolbox.HttpHeaderParser;
  *
  * @author fpredassi
  *
- * @param <T>
+ * @param <T> The type of the request being decorated.
  */
 public class JSONArrayRequestDecorator<T> extends RequestDecorator<T> {
 	private final String elementsKey;
