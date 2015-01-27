@@ -6,6 +6,10 @@
             "paths": [ "src/main/java" ],
             "aggregate": false
         },
+        "findbugs": {
+            "type": "findbugs-gradle",
+            "include": "(\\.java$)"
+        },
         "android": {
             "type": "AndroidLint",
             "gradle-modules": [ "volley-requests" ]
