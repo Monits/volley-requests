@@ -38,7 +38,8 @@ public abstract class ListenableRequest<T> extends Request<T> {
 	 * @param errListener The listener for errors.
 	 */
 	public ListenableRequest(final int method, @NonNull final String url,
-             @NonNull final Listener<T> listener, @Nullable final ErrorListener errListener) {
+					@NonNull final Listener<T> listener,
+					@Nullable final ErrorListener errListener) {
 		super(method, url, errListener);
 		
 		this.listener = listener;

@@ -65,7 +65,8 @@ public abstract class RfcCompliantListenableRequest<T> extends ListenableRequest
 	 * @param errListener The listener for errors.
 	 */
 	public RfcCompliantListenableRequest(final int method, @NonNull final String url,
-             @NonNull final Listener<T> listener, @Nullable final ErrorListener errListener) {
+					@NonNull final Listener<T> listener,
+					@Nullable final ErrorListener errListener) {
 		super(method, url, listener, errListener);
 
 		if (method == Method.DEPRECATED_GET_OR_POST) {

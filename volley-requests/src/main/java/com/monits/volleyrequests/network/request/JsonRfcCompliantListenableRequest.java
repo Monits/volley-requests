@@ -31,7 +31,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * An RFC compliant request that submits jsons in it's body.
  */
 public abstract class JsonRfcCompliantListenableRequest<T> extends
-		RfcCompliantListenableRequest<T> {
+				RfcCompliantListenableRequest<T> {
 
 	private final String json;
 	private final Map<String, String> headers;
@@ -46,8 +46,8 @@ public abstract class JsonRfcCompliantListenableRequest<T> extends
 	 * @param jsonBody The contents of the json to be sent in the request's body.
 	 */
 	public JsonRfcCompliantListenableRequest(final int method, @NonNull final String url,
-             @NonNull final Listener<T> listener, @Nullable final ErrorListener errListener,
-             @Nullable final String jsonBody) {
+					@NonNull final Listener<T> listener, @Nullable final ErrorListener errListener,
+					@Nullable final String jsonBody) {
 		super(method, url, listener, errListener);
 		
 		this.json = jsonBody;
@@ -74,9 +74,9 @@ public abstract class JsonRfcCompliantListenableRequest<T> extends
 		return "application/json";
 	}
 
-    @SuppressFBWarnings(value = { "DM_DEFAULT_ENCODING", "MDM_STRING_BYTES_ENCODING" },
-        justification = "The encoding will be sent with the headers automatically")
-    @Nullable
+	@SuppressFBWarnings(value = { "DM_DEFAULT_ENCODING", "MDM_STRING_BYTES_ENCODING" },
+					justification = "The encoding will be sent with the headers automatically")
+	@Nullable
 	@Override
 	public byte[] getBody() throws AuthFailureError {
 		return json == null ? null : json.getBytes();

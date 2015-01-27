@@ -52,7 +52,7 @@ public final class RequeueAfterRequestDecorator<T> extends Request<T> {
 	 * @see {@link RequeueAfterRequestDecorator#wrap(Request, RequeuePolicy)}
 	 */
 	private RequeueAfterRequestDecorator(@NonNull final Request<T> request,
-             @NonNull final RequeuePolicy requeuePolicy) {
+					@NonNull final RequeuePolicy requeuePolicy) {
 		super(request.getMethod(), request.getUrl(), null);
 
 		wrapped = request;
@@ -69,7 +69,7 @@ public final class RequeueAfterRequestDecorator<T> extends Request<T> {
 	 * @return the request.
 	 */
 	public static <T> RequeueAfterRequestDecorator<T> wrap(
-            @NonNull final Request<T> request, @NonNull final RequeuePolicy requeuePolicy) {
+					@NonNull final Request<T> request, @NonNull final RequeuePolicy requeuePolicy) {
 
 		return new RequeueAfterRequestDecorator<T>(request, requeuePolicy);
 	}
@@ -86,7 +86,7 @@ public final class RequeueAfterRequestDecorator<T> extends Request<T> {
 		return wrapped.parseNetworkResponse(networkResponse);
 	}
 
-    @Nullable
+	@Nullable
 	@Override
 	protected VolleyError parseNetworkError(final VolleyError volleyError) {
 		final NetworkResponse response = volleyError.networkResponse;
@@ -99,20 +99,20 @@ public final class RequeueAfterRequestDecorator<T> extends Request<T> {
 			}
 
 			requeuePolicy.executeBeforeRequeueing(
-					new Listener<Object>() {
+							new Listener<Object>() {
 
-						@Override
-						public void onResponse(final Object arg0) {
-							queue.add(RequeueAfterRequestDecorator.this);
-						}
-					},
-					new ErrorListener() {
+								@Override
+								public void onResponse(final Object arg0) {
+									queue.add(RequeueAfterRequestDecorator.this);
+								}
+							},
+							new ErrorListener() {
 
-						@Override
-						public void onErrorResponse(final VolleyError error) {
-							Log.e(VolleyLog.TAG, "Failed to retry", error.getCause());
-						}
-					});
+								@Override
+								public void onErrorResponse(final VolleyError error) {
+									Log.e(VolleyLog.TAG, "Failed to retry", error.getCause());
+								}
+							});
 
 			return null;
 		}
@@ -169,12 +169,18 @@ public final class RequeueAfterRequestDecorator<T> extends Request<T> {
 		return wrapped.getMethod();
 	}
 
+	/**
+	 * @deprecated Use {@link #getBody()} instead.
+	 */
 	@Deprecated
 	@Override
 	public byte[] getPostBody() throws AuthFailureError {
 		return wrapped.getPostBody();
 	}
 
+	/**
+	 * @deprecated Use {@link #getBodyContentType()} instead.
+	 */
 	@Deprecated
 	@Override
 	public String getPostBodyContentType() {
@@ -236,8 +242,8 @@ public final class RequeueAfterRequestDecorator<T> extends Request<T> {
 		return super.setRequestQueue(requestQueue);
 	}
 
-    @SuppressFBWarnings(value = "UR_UNINIT_READ_CALLED_FROM_SUPER_CONSTRUCTOR",
-            justification = "The read is done to avoid a NPE, and is properly documented.")
+	@SuppressFBWarnings(value = "UR_UNINIT_READ_CALLED_FROM_SUPER_CONSTRUCTOR",
+					justification = "The read is done to avoid a NPE, and is properly documented.")
 	@Override
 	public Request<?> setRetryPolicy(final RetryPolicy retryPolicy) {
 		/*

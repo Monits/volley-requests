@@ -44,15 +44,14 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * any scaling / quality processing should be done ahead by the developer.
  */
 public class UploadBitmapRfcCompliantListenableRequest extends
-		RfcCompliantListenableRequest<String> {
+				RfcCompliantListenableRequest<String> {
 
 	private static final String BOUNDARY = "----------------------------1a4aa85bba8a";
 	private static final String CONTENT_TYPE = "multipart/form-data; boundary=" + BOUNDARY;
 	private static final String MULTIPART_HEAD = "--" + BOUNDARY + "\r\n"
-			+ "Content-Disposition: form-data; name=\"%1$s\"; filename=\"%1$s\"\r\n"
-			+ "Content-Type: image/jpeg\r\n\r\n";
+					+ "Content-Disposition: form-data; name=\"%1$s\"; filename=\"%1$s\"\r\n"
+					+ "Content-Type: image/jpeg\r\n\r\n";
 	private static final String MULTIPART_TAIL = "\r\n--" + BOUNDARY + "--\r\n";
-	
 	
 	private final Bitmap bitmap;
 	private final String filename;
@@ -67,9 +66,11 @@ public class UploadBitmapRfcCompliantListenableRequest extends
 	 * @param bmp The bitmap to be uploaded.
 	 * @param filename The filename under which to submit the image.
 	 */
+	@SuppressWarnings("checkstyle:magicnumber")
 	public UploadBitmapRfcCompliantListenableRequest(final int method, @NonNull final String url,
-			@NonNull final Listener<String> listener, @Nullable final ErrorListener errListener,
-            @NonNull final Bitmap bmp, @NonNull final String filename) {
+					@NonNull final Listener<String> listener,
+					@Nullable final ErrorListener errListener,
+					@NonNull final Bitmap bmp, @NonNull final String filename) {
 		super(method, url, listener, errListener);
 		
 		bitmap = bmp;
@@ -97,10 +98,11 @@ public class UploadBitmapRfcCompliantListenableRequest extends
 		return CONTENT_TYPE;
 	}
 
-    @SuppressFBWarnings(value = { "DM_DEFAULT_ENCODING", "MDM_STRING_BYTES_ENCODING",
-            "VA_FORMAT_STRING_USES_NEWLINE" },
-        justification = "The encoding will be sent with the headers automatically."
-            + " The protocol requires \\r\\n, independently on the platform")
+	@SuppressWarnings("checkstyle:magicnumber")
+	@SuppressFBWarnings(value = { "DM_DEFAULT_ENCODING", "MDM_STRING_BYTES_ENCODING",
+					"VA_FORMAT_STRING_USES_NEWLINE" },
+					justification = "The encoding will be sent with the headers automatically."
+					+ " The protocol requires \\r\\n, independently on the platform")
 	@Override
 	public byte[] getBody() throws AuthFailureError {
 		final ByteArrayOutputStream bos = new ByteArrayOutputStream();

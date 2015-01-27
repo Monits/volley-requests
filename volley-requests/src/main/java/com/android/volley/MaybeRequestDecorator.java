@@ -18,7 +18,7 @@ public class MaybeRequestDecorator<T> extends RequestDecorator<T> {
 	private final T object;
 
 	public MaybeRequestDecorator(@NonNull final Request<T> request, final int method,
-            @NonNull final String url, @NonNull final T object) {
+					@NonNull final String url, @NonNull final T object) {
 		super(request, method, url);
 		this.object = object;
 	}
@@ -32,8 +32,8 @@ public class MaybeRequestDecorator<T> extends RequestDecorator<T> {
 		return super.parseNetworkResponse(response);
 	}
 
-    @NonNull
-    public T getObject() {
+	@NonNull
+	public T getObject() {
 		return object;
 	}
 }

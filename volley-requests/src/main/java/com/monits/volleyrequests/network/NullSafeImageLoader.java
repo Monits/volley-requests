@@ -31,18 +31,19 @@ import com.android.volley.toolbox.ImageLoader;
  */
 public class NullSafeImageLoader extends ImageLoader {
 
-	public NullSafeImageLoader(@NonNull final RequestQueue queue, @NonNull final ImageCache imageCache) {
+	public NullSafeImageLoader(@NonNull final RequestQueue queue,
+					@NonNull final ImageCache imageCache) {
 		super(queue, imageCache);
 	}
 
 	@Override
 	public ImageContainer get(final String requestUrl, final ImageListener imageListener,
-			final int maxWidth, final int maxHeight) {
+					final int maxWidth, final int maxHeight) {
 		
 		if (requestUrl == null) {
-            final ImageContainer container = new ImageContainer(null, null, null, null);
-            imageListener.onResponse(container, true);
-            return container;
+			final ImageContainer container = new ImageContainer(null, null, null, null);
+			imageListener.onResponse(container, true);
+			return container;
 		}
 		
 		return super.get(requestUrl, imageListener, maxWidth, maxHeight);

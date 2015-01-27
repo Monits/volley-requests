@@ -31,13 +31,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 public class GsonRequest<T> extends JsonRfcCompliantListenableRequest<T> {
-
 	private final Gson gson;
 	private final Type clazz;
 
 	public GsonRequest(final int method, @NonNull final String url, @NonNull final Gson gson,
-           @NonNull final Type clazz, @NonNull final Listener<T> listener,
-           @Nullable final ErrorListener errListener, @Nullable final String jsonBody) {
+					@NonNull final Type clazz, @NonNull final Listener<T> listener,
+					@Nullable final ErrorListener errListener, @Nullable final String jsonBody) {
 		super(method, url, listener, errListener, jsonBody);
 
 		this.gson = gson;
@@ -48,12 +47,14 @@ public class GsonRequest<T> extends JsonRfcCompliantListenableRequest<T> {
 	@Override
 	protected Response<T> parseNetworkResponse(final NetworkResponse response) {
 		try {
-			final String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-			return Response.success((T) gson.fromJson(json, clazz), HttpHeaderParser.parseCacheHeaders(response));
+			final String json = new String(response.data,
+							HttpHeaderParser.parseCharset(response.headers));
+			return Response.success((T) gson.fromJson(json, clazz),
+					HttpHeaderParser.parseCacheHeaders(response));
 		} catch (final UnsupportedEncodingException e) {
 			return Response.error(new ParseError(e));
 		} catch (final JsonSyntaxException e) {
-            return Response.error(new ParseError(e));
-        }
+			return Response.error(new ParseError(e));
+		}
 	}
 }

@@ -12,7 +12,7 @@ public abstract class RequestDecorator<T> extends Request<T> {
 	private final Request<T> request;
 
 	public RequestDecorator(@NonNull final Request<T> request, final int method,
-            @NonNull final String url) {
+					@NonNull final String url) {
 		super(method, url, null);
 		this.request = request;
 	}
@@ -41,8 +41,8 @@ public abstract class RequestDecorator<T> extends Request<T> {
 		return request.getTrafficStatsTag();
 	}
 
-    @SuppressFBWarnings(value = "UR_UNINIT_READ_CALLED_FROM_SUPER_CONSTRUCTOR",
-            justification = "The read is done to avoid a NPE, and is properly documented.")
+	@SuppressFBWarnings(value = "UR_UNINIT_READ_CALLED_FROM_SUPER_CONSTRUCTOR",
+					justification = "The read is done to avoid a NPE, and is properly documented.")
 	@Override
 	public Request<?> setRetryPolicy(final RetryPolicy retryPolicy) {
 		if (request != null) {
