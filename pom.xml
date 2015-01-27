@@ -8,6 +8,11 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+      <groupId>com.monits</groupId>
+      <artifactId>java-pom</artifactId>
+      <version>1.2-SNAPSHOT</version>
+    </parent>
 
     <groupId>com.monits</groupId>
     <artifactId>volleyrequests</artifactId>
@@ -16,22 +21,7 @@
 
     <name>volley-requests</name>
 
-    <properties>
-        <maven-checkstyle-plugin.version>2.12.1</maven-checkstyle-plugin.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
     <build>
         <sourceDirectory>volley-requests/src/main/java/</sourceDirectory>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>${maven-checkstyle-plugin.version}</version>
-                <configuration>
-                    <configLocation>http://static.monits.com/checkstyle.xml</configLocation>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
 </project>
