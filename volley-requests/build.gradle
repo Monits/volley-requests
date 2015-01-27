@@ -118,6 +118,21 @@ task pmd(type: Pmd) {
     ]
 }
 
+// add CPD to check
+check << {
+    File outDir = new File("$project.buildDir/reports/pmd/")
+    outDir.mkdirs()
+    ant.taskdef(name: 'cpd', classname: 'net.sourceforge.pmd.cpd.CPDTask',
+            classpath: configurations.pmd.asPath)
+    ant.cpd(minimumTokenCount: '100', format: 'xml',
+            outputFile: new File(outDir , 'cpd.xml')) {
+        fileset(dir: "src") {
+            include(name: '**/*.java')
+            exclude(name: '**/gen/**')
+        }
+    }
+}
+
 check.dependsOn 'pmd', 'findbugs'
 
 // Generate sources
