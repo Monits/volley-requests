@@ -15,6 +15,8 @@
 */
 package com.monits.volleyrequests.network;
 
+import android.support.annotation.NonNull;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 
@@ -25,11 +27,11 @@ import com.android.volley.toolbox.ImageLoader;
  * forcing the developer to manually check each time and opting between loading through the ImageLoader, or
  * setting the default placeholder manually. This implementation avoids that by safely showing the placeholder.
  * 
- * For non-null values,, loading will be delegated to Volley's {@link ImageLoader}.
+ * For non-null values, loading will be delegated to Volley's {@link ImageLoader}.
  */
 public class NullSafeImageLoader extends ImageLoader {
 
-	public NullSafeImageLoader(final RequestQueue queue, final ImageCache imageCache) {
+	public NullSafeImageLoader(@NonNull final RequestQueue queue, @NonNull final ImageCache imageCache) {
 		super(queue, imageCache);
 	}
 
@@ -38,7 +40,7 @@ public class NullSafeImageLoader extends ImageLoader {
 			final int maxWidth, final int maxHeight) {
 		
 		if (requestUrl == null) {
-            final ImageContainer container = new ImageContainer(null, requestUrl, null, null);
+            final ImageContainer container = new ImageContainer(null, null, null, null);
             imageListener.onResponse(container, true);
             return container;
 		}

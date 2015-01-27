@@ -1,5 +1,7 @@
 package com.android.volley;
 
+import android.support.annotation.NonNull;
+
 import org.apache.http.HttpStatus;
 
 import com.android.volley.toolbox.HttpHeaderParser;
@@ -15,8 +17,8 @@ import com.android.volley.toolbox.HttpHeaderParser;
 public class MaybeRequestDecorator<T> extends RequestDecorator<T> {
 	private final T object;
 
-	public MaybeRequestDecorator(final Request<T> request, final int method,
-			final String url, final T object) {
+	public MaybeRequestDecorator(@NonNull final Request<T> request, final int method,
+            @NonNull final String url, @NonNull final T object) {
 		super(request, method, url);
 		this.object = object;
 	}
@@ -30,7 +32,8 @@ public class MaybeRequestDecorator<T> extends RequestDecorator<T> {
 		return super.parseNetworkResponse(response);
 	}
 
-	public T getObject() {
+    @NonNull
+    public T getObject() {
 		return object;
 	}
 }

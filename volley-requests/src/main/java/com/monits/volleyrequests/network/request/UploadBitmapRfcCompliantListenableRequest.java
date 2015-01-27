@@ -21,6 +21,8 @@ import java.io.UnsupportedEncodingException;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -31,6 +33,8 @@ import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.toolbox.HttpHeaderParser;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Implementation of {@link RfcCompliantListenableRequest} used to upload
@@ -63,8 +67,9 @@ public class UploadBitmapRfcCompliantListenableRequest extends
 	 * @param bmp The bitmap to be uploaded.
 	 * @param filename The filename under which to submit the image.
 	 */
-	public UploadBitmapRfcCompliantListenableRequest(final int method, final String url,
-			final Listener<String> listener, final ErrorListener errListener, final Bitmap bmp, final String filename) {
+	public UploadBitmapRfcCompliantListenableRequest(final int method, @NonNull final String url,
+			@NonNull final Listener<String> listener, @Nullable final ErrorListener errListener,
+            @NonNull final Bitmap bmp, @NonNull final String filename) {
 		super(method, url, listener, errListener);
 		
 		bitmap = bmp;
@@ -91,13 +96,13 @@ public class UploadBitmapRfcCompliantListenableRequest extends
 	public String getBodyContentType() {
 		return CONTENT_TYPE;
 	}
-	
+
+    @SuppressFBWarnings(value = { "DM_DEFAULT_ENCODING", "MDM_STRING_BYTES_ENCODING",
+            "VA_FORMAT_STRING_USES_NEWLINE" },
+        justification = "The encoding will be sent with the headers automatically."
+            + " The protocol requires \\r\\n, independently on the platform")
 	@Override
 	public byte[] getBody() throws AuthFailureError {
-		if (bitmap == null) {
-			return null;
-		}
-		
 		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try {
 			bos.write(String.format(MULTIPART_HEAD, filename).getBytes());

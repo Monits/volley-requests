@@ -15,6 +15,9 @@
 */
 package com.monits.volleyrequests.network.request;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 
@@ -32,9 +35,9 @@ public class GsonRequest<T> extends JsonRfcCompliantListenableRequest<T> {
 	private final Gson gson;
 	private final Type clazz;
 
-	public GsonRequest(final int method, final String url, final Gson gson,
-			final Type clazz, final Listener<T> listener,
-			final ErrorListener errListener, final String jsonBody) {
+	public GsonRequest(final int method, @NonNull final String url, @NonNull final Gson gson,
+           @NonNull final Type clazz, @NonNull final Listener<T> listener,
+           @Nullable final ErrorListener errListener, @Nullable final String jsonBody) {
 		super(method, url, listener, errListener, jsonBody);
 
 		this.gson = gson;

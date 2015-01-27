@@ -16,6 +16,9 @@
 
 package com.monits.volleyrequests.restsupport;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -69,8 +72,8 @@ public class RestResource<T> {
 	 *            The type of the object that the json represents
 	 * @throws MalformedURLException
 	 */
-	public RestResource(final String resource, final Class<T> clazz,
-			final Gson gson) throws MalformedURLException {
+	public RestResource(@NonNull final String resource, @NonNull final Class<T> clazz,
+            @NonNull final Gson gson) throws MalformedURLException {
 		final URL url = new URL(resource);
 		this.resource = url.getFile();
 		this.clazz = clazz;
@@ -95,15 +98,12 @@ public class RestResource<T> {
 	 *            The error listener
 	 * @param object
 	 *            The object you want to save in a POST or PUT method
-	 * @param queryParams
-	 *            The query parameters
 	 *
-	 * @return
+	 * @return The request object for the given resource
 	 */
-	protected <K> Request<K> createRequest(final int method, final String url,
-			final Type type, final Listener<K> listener,
-			final ErrorListener errListener,
-			final Map<String, String> queryParams, final T object) {
+	protected <K> Request<K> createRequest(final int method, @NonNull final String url,
+            @NonNull final Type type, @NonNull final Listener<K> listener,
+			@Nullable final ErrorListener errListener, @Nullable final T object) {
 		final String jsonBody  = object != null ? gson.toJson(object) : null;
 		return new GsonRequest<K>(method, url, this.gson,
 				type, listener, errListener, jsonBody);
@@ -125,12 +125,12 @@ public class RestResource<T> {
 	 *            The listener for errors.
 	 * @return The GsonRequest with the created request
 	 */
-	public Request<T> getObject(final Map<String, String> resourceParams,
-			final Map<String, String> queryParams, final Listener<T> listener,
-			final ErrorListener errListener) {
+	public Request<T> getObject(@Nullable final Map<String, String> resourceParams,
+            @Nullable final Map<String, String> queryParams, @NonNull final Listener<T> listener,
+			@Nullable final ErrorListener errListener) {
 		final String url = generateFullUrl(resourceParams, queryParams);
 		final Request<T> request = createRequest(Method.GET, this.hostAndPort + url, this.clazz,
-				listener, errListener, queryParams, null);
+				listener, errListener, null);
 		configureRequest(request);
 		return request;
 	}
@@ -149,8 +149,8 @@ public class RestResource<T> {
 	 *            The listener for errors.
 	 * @return The GsonRequest with the created request
 	 */
-	public Request<T> getObject(final Map<String, String> resourceParams,
-			final Listener<T> listener, final ErrorListener errListener) {
+	public Request<T> getObject(@NonNull final Map<String, String> resourceParams,
+            @NonNull final Listener<T> listener, @Nullable final ErrorListener errListener) {
 		return getObject(resourceParams, null, listener, errListener);
 	}
 
@@ -175,14 +175,14 @@ public class RestResource<T> {
 	 *            The listener for errors.
 	 * @return The JSONArrayGsonRequest with the created request
 	 */
-	public Request<List<T>> getAll(final Map<String, String> resourceParams,
-			final Map<String, String> queryParams,
-			final Listener<List<T>> listener, final ErrorListener errListener) {
+	public Request<List<T>> getAll(@Nullable final Map<String, String> resourceParams,
+			@Nullable final Map<String, String> queryParams,
+			@NonNull final Listener<List<T>> listener, @Nullable final ErrorListener errListener) {
 
 		final String url = generateFullUrl(resourceParams, queryParams);
 
 		final Request<List<T>> request = createRequest(Method.GET, this.hostAndPort + url,
-				listTypeToken, listener, errListener, queryParams, null);
+				listTypeToken, listener, errListener, null);
 		final JSONArrayRequestDecorator<List<T>> jsonRequest = new JSONArrayRequestDecorator<List<T>>(request,
 				Method.GET, url, elementsKey);
 		configureRequest(jsonRequest);
@@ -208,8 +208,8 @@ public class RestResource<T> {
 	 *            The listener for errors.
 	 * @return The JSONArrayGsonRequest with the created request
 	 */
-	public Request<List<T>> getAll(final Map<String, String> resourceParams,
-			final Listener<List<T>> listener, final ErrorListener errListener) {
+	public Request<List<T>> getAll(@Nullable final Map<String, String> resourceParams,
+			@NonNull final Listener<List<T>> listener, @Nullable final ErrorListener errListener) {
 		return getAll(resourceParams, null, listener, errListener);
 	}
 
@@ -235,9 +235,9 @@ public class RestResource<T> {
 	 *             or Method.PUT
 	 */
 	public Request<T> saveObject(final int method,
-			final Map<String, String> resourceParams,
-			final Listener<T> listener, final ErrorListener errListener,
-			final T object) throws IllegalArgumentException {
+			@Nullable final Map<String, String> resourceParams,
+			@NonNull final Listener<T> listener, @Nullable final ErrorListener errListener,
+			@NonNull final T object) {
 		return saveObject(method, resourceParams, null, listener, errListener,
 				object);
 	}
@@ -265,17 +265,16 @@ public class RestResource<T> {
 	 *             or Method.PUT
 	 */
 	public Request<T> saveObject(final int method,
-			final Map<String, String> resourceParams,
-			final Map<String, String> queryParams, final Listener<T> listener,
-			final ErrorListener errListener, final T object)
-		throws IllegalArgumentException {
+			@Nullable final Map<String, String> resourceParams,
+			@Nullable final Map<String, String> queryParams, @NonNull final Listener<T> listener,
+			@Nullable final ErrorListener errListener, @NonNull final T object) {
 		if (method != Method.POST && method != Method.PUT) {
 			throw new IllegalArgumentException(
 					"Save object can only be used with POST or PUT method");
 		}
 		final String url = generateFullUrl(resourceParams, queryParams);
 		final Request<T> request = createRequest(method, this.hostAndPort + url, this.clazz,
-				listener, errListener, queryParams, object);
+				listener, errListener, object);
 		final MaybeRequestDecorator<T> maybeRequestDecorator = new MaybeRequestDecorator<T>(request,
 				method, url, object);
 		configureRequest(maybeRequestDecorator);
@@ -291,8 +290,8 @@ public class RestResource<T> {
 	 *            The listener for errors.
 	 * @return The GsonRequest with the created request
 	 */
-	public Request<T> deleteObject(final Listener<T> listener,
-			final ErrorListener errListener) {
+	public Request<T> deleteObject(@NonNull final Listener<T> listener,
+			@Nullable final ErrorListener errListener) {
 		return deleteObject(null, listener, errListener);
 	}
 
@@ -310,11 +309,11 @@ public class RestResource<T> {
 	 *            The listener for errors.
 	 * @return The GsonRequest with the created request
 	 */
-	public Request<T> deleteObject(final Map<String, String> resourceParams,
-			final Listener<T> listener, final ErrorListener errListener) {
+	public Request<T> deleteObject(@Nullable final Map<String, String> resourceParams,
+			@NonNull final Listener<T> listener, @Nullable final ErrorListener errListener) {
 		final String url = generateFullUrl(resourceParams, null);
 		final Request<T> request = createRequest(Method.DELETE, this.hostAndPort + url, this.clazz,
-				listener, errListener, Collections.<String, String>emptyMap(), null);
+				listener, errListener, null);
 		configureRequest(request);
 		return request;
 	}
@@ -332,8 +331,8 @@ public class RestResource<T> {
 	 *            A Map with the parameters that must be in the query string.
 	 * @return The url
 	 */
-	private String generateFullUrl(final Map<String, String> resourceParams,
-			final Map<String, String> queryParams) {
+	private String generateFullUrl(@Nullable final Map<String, String> resourceParams,
+			@Nullable final Map<String, String> queryParams) {
 		final Map<String, String> map = resourceParams == null ? Collections
 				.<String, String>emptyMap() : resourceParams;
 		String url = replaceValuesInResource(map);
@@ -364,8 +363,7 @@ public class RestResource<T> {
 	 *            the map must contains {"userId", "123}
 	 * @return The url
 	 */
-	private String replaceValuesInResource(
-			final Map<String, String> resourceParams) {
+	private String replaceValuesInResource(@NonNull final Map<String, String> resourceParams) {
 		String url = resource;
 		final Matcher matcher = PATTERN.matcher(url);
 		while (matcher.find()) {
@@ -374,8 +372,7 @@ public class RestResource<T> {
 			url = url.replace(matcher.group(1), value);
 		}
 		url = url.replaceAll(REMOVE_MULTIPLE_SLASH, "/");
-		url = url.replaceAll(REMOVE_FINAL_SLASH, "");
-		return url;
+		return url.replaceAll(REMOVE_FINAL_SLASH, "");
 	}
 
 	/**
@@ -385,7 +382,7 @@ public class RestResource<T> {
 	 *            The url for the request
 	 * @return {protocol}://{authority}
 	 */
-	private String prepareHostURL(final URL url) {
+	private String prepareHostURL(@NonNull final URL url) {
 		final StringBuilder builder = new StringBuilder();
 		builder.append(url.getProtocol()).append("://")
 				.append(url.getAuthority());
@@ -399,7 +396,7 @@ public class RestResource<T> {
 	 *            the key used in the JSON response. If null, it is assumed that
 	 *            the JSON array comes alone without being wrapped by an object.
 	 */
-	public void setElementsKey(final String elementsKey) {
+	public void setElementsKey(@NonNull final String elementsKey) {
 		this.elementsKey = elementsKey;
 	}
 
@@ -409,7 +406,7 @@ public class RestResource<T> {
 	 *
 	 * @param request The request that is going to be modify
 	 */
-	protected void configureRequest(final Request<?> request) {
+	protected void configureRequest(@NonNull final Request<?> request) {
 
 	}
 

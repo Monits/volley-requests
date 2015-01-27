@@ -15,6 +15,9 @@
 */
 package com.monits.volleyrequests.network.request;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.android.volley.NetworkResponse;
 import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
@@ -35,8 +38,9 @@ public class EmptyResponseRequest extends JsonRfcCompliantListenableRequest<Void
 	 * @param errListener The listener for errors.
 	 * @param jsonBody The contents of the json to be sent in the request's body.
 	 */
-	public EmptyResponseRequest(final int method, final String url,
-			final Listener<Void> listener, final ErrorListener errListener, final String jsonBody) {
+	public EmptyResponseRequest(final int method, @NonNull final String url,
+			@NonNull final Listener<Void> listener, @Nullable final ErrorListener errListener,
+            @Nullable final String jsonBody) {
 		super(method, url, listener, errListener, jsonBody);
 	}
 

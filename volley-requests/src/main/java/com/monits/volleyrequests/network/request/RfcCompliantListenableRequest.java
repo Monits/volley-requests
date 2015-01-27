@@ -15,6 +15,9 @@
 */
 package com.monits.volleyrequests.network.request;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response.ErrorListener;
@@ -61,8 +64,8 @@ public abstract class RfcCompliantListenableRequest<T> extends ListenableRequest
 	 * @param listener The listener for success.
 	 * @param errListener The listener for errors.
 	 */
-	public RfcCompliantListenableRequest(final int method, final String url,
-			final Listener<T> listener, final ErrorListener errListener) {
+	public RfcCompliantListenableRequest(final int method, @NonNull final String url,
+             @NonNull final Listener<T> listener, @Nullable final ErrorListener errListener) {
 		super(method, url, listener, errListener);
 
 		if (method == Method.DEPRECATED_GET_OR_POST) {

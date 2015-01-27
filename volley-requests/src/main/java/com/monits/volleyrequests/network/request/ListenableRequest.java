@@ -15,6 +15,9 @@
 */
 package com.monits.volleyrequests.network.request;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.android.volley.Request;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
@@ -34,8 +37,8 @@ public abstract class ListenableRequest<T> extends Request<T> {
 	 * @param listener The listener for success.
 	 * @param errListener The listener for errors.
 	 */
-	public ListenableRequest(final int method, final String url,
-			final Listener<T> listener, final ErrorListener errListener) {
+	public ListenableRequest(final int method, @NonNull final String url,
+             @NonNull final Listener<T> listener, @Nullable final ErrorListener errListener) {
 		super(method, url, errListener);
 		
 		this.listener = listener;

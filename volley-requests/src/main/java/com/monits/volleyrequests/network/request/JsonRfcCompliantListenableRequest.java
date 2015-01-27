@@ -15,12 +15,17 @@
 */
 package com.monits.volleyrequests.network.request;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * An RFC compliant request that submits jsons in it's body.
@@ -40,8 +45,9 @@ public abstract class JsonRfcCompliantListenableRequest<T> extends
 	 * @param errListener The listener for errors.
 	 * @param jsonBody The contents of the json to be sent in the request's body.
 	 */
-	public JsonRfcCompliantListenableRequest(final int method, final String url,
-			final Listener<T> listener, final ErrorListener errListener, final String jsonBody) {
+	public JsonRfcCompliantListenableRequest(final int method, @NonNull final String url,
+             @NonNull final Listener<T> listener, @Nullable final ErrorListener errListener,
+             @Nullable final String jsonBody) {
 		super(method, url, listener, errListener);
 		
 		this.json = jsonBody;
@@ -67,7 +73,10 @@ public abstract class JsonRfcCompliantListenableRequest<T> extends
 	public String getBodyContentType() {
 		return "application/json";
 	}
-	
+
+    @SuppressFBWarnings(value = { "DM_DEFAULT_ENCODING", "MDM_STRING_BYTES_ENCODING" },
+        justification = "The encoding will be sent with the headers automatically")
+    @Nullable
 	@Override
 	public byte[] getBody() throws AuthFailureError {
 		return json == null ? null : json.getBytes();

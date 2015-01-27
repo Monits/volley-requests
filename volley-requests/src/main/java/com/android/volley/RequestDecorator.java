@@ -1,13 +1,18 @@
 package com.android.volley;
 
+import android.support.annotation.NonNull;
+
 import java.util.Map;
 
 import com.android.volley.Cache.Entry;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 public abstract class RequestDecorator<T> extends Request<T> {
 	private final Request<T> request;
 
-	public RequestDecorator(final Request<T> request, final int method, final String url) {
+	public RequestDecorator(@NonNull final Request<T> request, final int method,
+            @NonNull final String url) {
 		super(method, url, null);
 		this.request = request;
 	}
@@ -36,9 +41,12 @@ public abstract class RequestDecorator<T> extends Request<T> {
 		return request.getTrafficStatsTag();
 	}
 
+    @SuppressFBWarnings(value = "UR_UNINIT_READ_CALLED_FROM_SUPER_CONSTRUCTOR",
+            justification = "The read is done to avoid a NPE, and is properly documented.")
 	@Override
 	public Request<?> setRetryPolicy(final RetryPolicy retryPolicy) {
 		if (request != null) {
+            // Method is called from constructor, before we initialize request
 			request.setRetryPolicy(retryPolicy);
 		}
 		return super.setRetryPolicy(retryPolicy);
@@ -154,7 +162,4 @@ public abstract class RequestDecorator<T> extends Request<T> {
 	protected void deliverResponse(final T response) {
 		request.deliverResponse(response);
 	}
-
-
-
 }

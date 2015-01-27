@@ -17,11 +17,15 @@ package com.android.volley;
 
 import java.util.Map;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.android.volley.Cache.Entry;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Wrapper for the {@link Request} class, that on failure delegates to a policy to check
@@ -46,7 +50,8 @@ public class RequeueAfterRequestDecorator<T> extends Request<T> {
 	 *
 	 * @see {@link RequeueAfterRequestDecorator#wrap(Request, RequeuePolicy)}
 	 */
-	private RequeueAfterRequestDecorator(final Request<T> request, final RequeuePolicy requeuePolicy) {
+	private RequeueAfterRequestDecorator(@NonNull final Request<T> request,
+             @NonNull final RequeuePolicy requeuePolicy) {
 		super(request.getMethod(), request.getUrl(), null);
 
 		wrapped = request;
@@ -63,7 +68,7 @@ public class RequeueAfterRequestDecorator<T> extends Request<T> {
 	 * @return the request.
 	 */
 	public static <T> RequeueAfterRequestDecorator<T> wrap(
-			final Request<T> request, final RequeuePolicy requeuePolicy) {
+            @NonNull final Request<T> request, @NonNull final RequeuePolicy requeuePolicy) {
 
 		return new RequeueAfterRequestDecorator<T>(request, requeuePolicy);
 	}
@@ -80,6 +85,7 @@ public class RequeueAfterRequestDecorator<T> extends Request<T> {
 		return wrapped.parseNetworkResponse(networkResponse);
 	}
 
+    @Nullable
 	@Override
 	protected VolleyError parseNetworkError(final VolleyError volleyError) {
 		final NetworkResponse response = volleyError.networkResponse;
@@ -229,6 +235,8 @@ public class RequeueAfterRequestDecorator<T> extends Request<T> {
 		return super.setRequestQueue(requestQueue);
 	}
 
+    @SuppressFBWarnings(value = "UR_UNINIT_READ_CALLED_FROM_SUPER_CONSTRUCTOR",
+            justification = "The read is done to avoid a NPE, and is properly documented.")
 	@Override
 	public Request<?> setRetryPolicy(final RetryPolicy retryPolicy) {
 		/*

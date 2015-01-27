@@ -1,5 +1,7 @@
 package com.android.volley;
 
+import android.support.annotation.NonNull;
+
 import java.io.UnsupportedEncodingException;
 
 import org.json.JSONArray;
@@ -19,8 +21,8 @@ import com.android.volley.toolbox.HttpHeaderParser;
 public class JSONArrayRequestDecorator<T> extends RequestDecorator<T> {
 	private final String elementsKey;
 
-	public JSONArrayRequestDecorator(final Request<T> request, final int method,
-			final String url, final String elementsKey) {
+	public JSONArrayRequestDecorator(@NonNull final Request<T> request, final int method,
+            @NonNull final String url, @NonNull final String elementsKey) {
 		super(request, method, url);
 		this.elementsKey = elementsKey;
 	}
@@ -44,6 +46,7 @@ public class JSONArrayRequestDecorator<T> extends RequestDecorator<T> {
 		}
 	}
 
+    @NonNull
 	public String getElementsKey() {
 		return elementsKey;
 	}

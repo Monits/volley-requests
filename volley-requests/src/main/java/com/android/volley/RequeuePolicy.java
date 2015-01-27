@@ -15,6 +15,9 @@
 */
 package com.android.volley;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 
@@ -29,7 +32,7 @@ public interface RequeuePolicy {
 	 * @param networkResponse the given response of the first request.
 	 * @return true if should retry, false otherwise.
 	 */
-	boolean shouldRequeue(NetworkResponse networkResponse);
+	boolean shouldRequeue(@Nullable NetworkResponse networkResponse);
 
 	/**
 	 * In case {@link RequeuePolicy#shouldRequeue(NetworkResponse)} returns true, this method will be called.
@@ -38,5 +41,5 @@ public interface RequeuePolicy {
 	 * @param successCallback notify this listener in case of success.
 	 * @param errorCallback notify this listener in case of failure.
 	 */
-	void executeBeforeRequeueing(Listener<?> successCallback, ErrorListener errorCallback);
+	void executeBeforeRequeueing(@NonNull Listener<?> successCallback, @NonNull ErrorListener errorCallback);
 }
