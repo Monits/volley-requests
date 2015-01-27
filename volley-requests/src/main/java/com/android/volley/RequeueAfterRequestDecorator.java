@@ -37,7 +37,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * By using the decorator pattern, this behavior can be added to any request regardless of it's type
  * and origin.
  */
-public class RequeueAfterRequestDecorator<T> extends Request<T> {
+@SuppressWarnings("PMD.TooManyMethods")
+public final class RequeueAfterRequestDecorator<T> extends Request<T> {
 
 	private final Request<T> wrapped;
 	private final RequeuePolicy requeuePolicy;

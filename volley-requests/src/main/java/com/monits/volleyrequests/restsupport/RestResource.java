@@ -104,7 +104,7 @@ public class RestResource<T> {
 	protected <K> Request<K> createRequest(final int method, @NonNull final String url,
             @NonNull final Type type, @NonNull final Listener<K> listener,
 			@Nullable final ErrorListener errListener, @Nullable final T object) {
-		final String jsonBody  = object != null ? gson.toJson(object) : null;
+		final String jsonBody  = object == null ? null : gson.toJson(object);
 		return new GsonRequest<K>(method, url, this.gson,
 				type, listener, errListener, jsonBody);
 	}
@@ -338,13 +338,13 @@ public class RestResource<T> {
 		String url = replaceValuesInResource(map);
 		if (queryParams != null && !queryParams.isEmpty()) {
 			final StringBuilder builder = new StringBuilder();
-			builder.append(url).append("?");
+			builder.append(url).append('?');
 			int elementsLeft = queryParams.size();
 			for (final Entry<String, String> entry : queryParams.entrySet()) {
-				builder.append(entry.getKey()).append("=")
+				builder.append(entry.getKey()).append('=')
 						.append(entry.getValue());
 				if (--elementsLeft > 0) {
-					builder.append("&");
+					builder.append('&');
 				}
 			}
 			url = builder.toString();
@@ -407,7 +407,7 @@ public class RestResource<T> {
 	 * @param request The request that is going to be modify
 	 */
 	protected void configureRequest(@NonNull final Request<?> request) {
-
+        // Entry point for extending classes
 	}
 
 }
