@@ -86,6 +86,7 @@ task checkstyle(type: Checkstyle, dependsOn: downloadCheckstyleXml) {
 }
 
 task findbugs(type: FindBugs) {
+    dependsOn project.tasks.withType(JavaCompile)
     classes = files("$project.buildDir/intermediates/classes/")
     ignoreFailures = true
     effort = "max"
