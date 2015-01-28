@@ -142,14 +142,10 @@ public abstract class RequestDecorator<T> extends Request<T> {
 		request.deliverError(error);
 	}
 
-	@Override
-	public int compareTo(final Request<T> other) {
-		return request.compareTo(other);
-	}
 
 	@Override
 	public String toString() {
-		return request.toString();
+		return "RequestDecorator for " + request.toString();
 	}
 
 
