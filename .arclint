@@ -11,6 +11,10 @@
             "type": "checkstyle-gradle",
             "include": "(\\.java$)"
         },
+        "pmd": {
+            "type": "pmd-gradle",
+            "include": "(\\.java$)"
+        },
         "findbugs": {
             "type": "findbugs-gradle",
             "include": "(\\.java$)"
