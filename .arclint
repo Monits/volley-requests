@@ -1,10 +1,8 @@
 {
     "linters": {
         "checkstyle": {
-            "type": "checkstyle",
-            "include": "(\\.java$)",
-            "paths": [ "src/main/java" ],
-            "aggregate": false
+            "type": "checkstyle-gradle",
+            "include": "(\\.java$)"
         },
         "findbugs": {
             "type": "findbugs-gradle",
