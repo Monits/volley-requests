@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'maven'
 apply plugin: 'findbugs'
 apply plugin: 'pmd'
+apply plugin: 'checkstyle'
 
 version = "1.0.0"
 group = "com.monits"
@@ -44,6 +45,8 @@ dependencies {
 
     provided 'com.google.code.findbugs:annotations:3.0.0'
 
+    checkstyle 'com.puppycrawl.tools:checkstyle:6.2'
+
     findbugs 'com.google.code.findbugs:findbugs:3.0.0'
     findbugs configurations.findbugsPlugins.dependencies
 
@@ -67,6 +70,21 @@ configurations {
 }
 
 // linters!
+task downloadCheckstyleXml {
+    new File("${project.rootDir}/config/checkstyle/").mkdirs()
+    ant.get(src: 'http://static.monits.com/checkstyle.xml', dest: "${project.rootDir}/config/checkstyle/checkstyle.xml")
+}
+
+task checkstyle(type: Checkstyle, dependsOn: downloadCheckstyleXml) {
+    configFile file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    classpath = project.configurations.compile
+}
+
 task findbugs(type: FindBugs) {
     classes = files("$project.buildDir/intermediates/classes/")
     ignoreFailures = true
@@ -133,7 +151,7 @@ check << {
     }
 }
 
-check.dependsOn 'pmd', 'findbugs'
+check.dependsOn 'checkstyle', 'pmd', 'findbugs'
 
 // Generate sources
 task sourcesJar(type: Jar) {
