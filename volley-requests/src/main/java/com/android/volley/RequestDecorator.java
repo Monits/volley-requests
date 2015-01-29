@@ -45,6 +45,7 @@ public abstract class RequestDecorator<T> extends Request<T> {
 					justification = "The read is done to avoid a NPE, and is properly documented.")
 	@Override
 	public Request<?> setRetryPolicy(final RetryPolicy retryPolicy) {
+		//noinspection ConstantConditions
 		if (request != null) {
             // Method is called from constructor, before we initialize request
 			request.setRetryPolicy(retryPolicy);
@@ -142,12 +143,10 @@ public abstract class RequestDecorator<T> extends Request<T> {
 		request.deliverError(error);
 	}
 
-
 	@Override
 	public String toString() {
-		return "RequestDecorator for " + request.toString();
+		return "RequestDecorator for " + request;
 	}
-
 
 	@Override
 	protected Response<T> parseNetworkResponse(final NetworkResponse response) {

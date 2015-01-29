@@ -6,4 +6,7 @@
     <Match>
         <Bug pattern="UNKNOWN_NULLNESS_OF_RETURNED_VALUE" />
     </Match>
+    <Match>
+        <Class name="~.*\.R\$.*"/>
+    </Match>
 </FindBugsFilter>
