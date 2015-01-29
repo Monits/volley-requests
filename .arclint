@@ -1,0 +1,36 @@
+{
+    "linters": {
+        "json": {
+            "type": "json",
+            "include": [
+                "(^\\.arcconfig$)",
+                "(^\\.arclint$)"
+            ]
+        },
+        "checkstyle": {
+            "type": "checkstyle-gradle",
+            "include": "(\\.java$)"
+        },
+        "pmd": {
+            "type": "pmd-gradle",
+            "include": "(\\.java$)"
+        },
+        "findbugs": {
+            "type": "findbugs-gradle",
+            "include": "(\\.java$)"
+        },
+        "android": {
+            "type": "AndroidLint",
+            "gradle-modules": [ "volley-requests" ]
+        },
+        "chmod": {
+            "type": "chmod"
+        },
+        "merge-conflict": {
+            "type": "merge-conflict"
+        },
+        "spelling": {
+            "type": "spelling"
+        }
+    }
+}
