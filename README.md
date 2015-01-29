@@ -5,6 +5,31 @@ implementations and utilities based on Android's Volley library.
 
 # Usage
 
+## Using Gradle
+
+You can just add the dependency by adding our maven repositories
+
+```
+repositories {
+    maven {
+        url 'http://nexus.monits.com/content/repositories/oss-releases'
+    }
+}
+```
+
+And then you can add the library as dependency
+
+```
+dependencies {
+    compile 'com.monits:volley-requests:1.0.1'
+}
+```
+
+For `SNAPSHOT` versions you can use the repository url
+`http://nexus.monits.com/content/repositories/oss-snapshots`
+
+## Using Eclipse ADT
+
 This is an Android library project, just like Volley.
 
 * Clone this repository.
@@ -18,6 +43,7 @@ We love Volley and use it extensively. In doing so, we found several patterns
 and types of requests coming up over and over again.
 
 Among other things, we include:
+
 ### A family of requests that behave as expected out of the box
 
 Volley is extremely aggresive in it's caching strategies. If you are using a
@@ -110,7 +136,7 @@ We are also looking forward to your bug reports, feature requests and questions
 regarding android-volley.
 	
 # Copyright and License
-Copyright 2010-2014 Monits.
+Copyright 2010-2015 Monits.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this work except in compliance with the License. You may obtain a copy of the
