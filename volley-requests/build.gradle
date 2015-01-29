@@ -4,7 +4,7 @@ apply plugin: 'findbugs'
 apply plugin: 'pmd'
 apply plugin: 'checkstyle'
 
-version = "1.0.0-RC1"
+version = "1.0.0"
 group = "com.monits"
 
 ext.isReleaseVersion = has("release")
