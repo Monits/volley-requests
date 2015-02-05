@@ -1,0 +1,9 @@
+language: android
+android:
+  components:
+    - platform-tools
+    - tools
+notifications:
+  email:
+    recipients:
+      - jmsotuyo@monits.com
