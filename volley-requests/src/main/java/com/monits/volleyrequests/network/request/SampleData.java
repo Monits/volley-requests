@@ -8,17 +8,21 @@ public class SampleData {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof SampleData)) return false;
+	public boolean equals(final Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof SampleData)) {
+			return false;
+		}
 
-		SampleData that = (SampleData) o;
+		final SampleData that = (SampleData) o;
 
-		return !(data != null ? !data.equals(that.data) : that.data != null);
+		return data == null ? that.data == null : data.equals(that.data);
 	}
 
 	@Override
 	public int hashCode() {
-		return data != null ? data.hashCode() : 0;
+		return data == null ? 0 : data.hashCode() ;
 	}
 }

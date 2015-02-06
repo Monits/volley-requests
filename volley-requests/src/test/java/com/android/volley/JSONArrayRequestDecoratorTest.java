@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.fail;
 import static org.mockito.Mockito.verify;
 
@@ -60,6 +61,40 @@ public class JSONArrayRequestDecoratorTest
 
 			assertEquals(jsonArray, new JSONArray(new String(capture.getValue().data, CHARSET)));
 		} catch (final UnsupportedEncodingException | JSONException e) {
+			fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testParseNetworkResponseWithBadEncoding() {
+		final JSONObject json = new JSONObject();
+
+		final Map<String, String> headers = new HashMap<>();
+		headers.put(HTTP.CONTENT_TYPE, "application/javascript; charset=nonexistingcharset");
+
+		try {
+			final NetworkResponse response = new NetworkResponse(json.toString().getBytes(CHARSET),
+					headers);
+			final Response<Object> parsedResponse = decorator.parseNetworkResponse(response);
+
+			assertFalse(parsedResponse.isSuccess());
+		} catch (final UnsupportedEncodingException e) {
+			fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testParseNetworkResponseWithBadJson() {
+		final Map<String, String> headers = new HashMap<>();
+		headers.put(HTTP.CONTENT_TYPE, "application/javascript; charset=" + CHARSET);
+
+		try {
+			final NetworkResponse response = new NetworkResponse("{test: [1,2}".getBytes(CHARSET),
+					headers);
+			final Response<Object> parsedResponse = decorator.parseNetworkResponse(response);
+
+			assertFalse(parsedResponse.isSuccess());
+		} catch (final UnsupportedEncodingException e) {
 			fail(e.getMessage());
 		}
 	}

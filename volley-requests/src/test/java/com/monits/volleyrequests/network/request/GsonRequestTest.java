@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.fail;
 
 @RunWith(RobolectricTestRunner.class)
@@ -46,6 +47,43 @@ public class GsonRequestTest extends AbstractRfcCompliantListenableRequestTest<S
 			final Response<SampleData> response = request.parseNetworkResponse(networkResponse);
 
 			assertEquals(data, response.result);
+		} catch (final UnsupportedEncodingException e) {
+			fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testParseNetworkResponseWithBadEncoding() {
+		// This method is not delegated, but overridden by the decorator
+		final SampleData data = newValidResponse();
+		final String json = new Gson().toJson(data);
+		final Map<String, String> headers = new HashMap<>();
+		headers.put(HTTP.CONTENT_TYPE, "application/javascript; charset=nonexistingcharset");
+
+		try {
+			final NetworkResponse networkResponse = new NetworkResponse(
+					json.getBytes(CHARSET), headers);
+			final Response<SampleData> response = request.parseNetworkResponse(networkResponse);
+
+			assertFalse(response.isSuccess());
+		} catch (final UnsupportedEncodingException e) {
+			fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testParseNetworkResponseWithBadJson() {
+		// This method is not delegated, but overridden by the decorator
+		final String json = "{data: null";	// Malformed json
+		final Map<String, String> headers = new HashMap<>();
+		headers.put(HTTP.CONTENT_TYPE, "application/javascript; charset=" + CHARSET);
+
+		try {
+			final NetworkResponse networkResponse = new NetworkResponse(
+					json.getBytes(CHARSET), headers);
+			final Response<SampleData> response = request.parseNetworkResponse(networkResponse);
+
+			assertFalse(response.isSuccess());
 		} catch (final UnsupportedEncodingException e) {
 			fail(e.getMessage());
 		}

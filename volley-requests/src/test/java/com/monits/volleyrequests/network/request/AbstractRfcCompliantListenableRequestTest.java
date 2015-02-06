@@ -17,6 +17,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @Ignore("Abstract test class for abstract class, don't run stand alone")
+@SuppressWarnings("PMD.TooManyStaticImports")
 public abstract class AbstractRfcCompliantListenableRequestTest<S, T extends RfcCompliantListenableRequest<S>>
 		extends AbstractListenableRequestTest<S, T> {
 
