@@ -57,7 +57,7 @@ import com.monits.volleyrequests.network.request.GsonRequest;
 public class RestResource<T> {
 	@Retention(RetentionPolicy.SOURCE)
 	@IntDef({ Method.POST, Method.PUT })
-	public @interface SaveMethod {}
+	public @interface SaveMethod { }
 
 	private static final String PARAMETERS_REGEX = "/(:([^/]+))";
 	private static final String REMOVE_MULTIPLE_SLASH = "/{2,}";

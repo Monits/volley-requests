@@ -132,7 +132,8 @@ public class RestResourceTest {
 		final Map<String, String> resourceParams = new HashMap<>();
 		resourceParams.put(RESOURCE_PARAM_USER_ID, RESOURCE_VALUE_USER_ID);
 
-		@SuppressWarnings("ResourceType")	// Suppress lint warning for the issue tested
+		// Suppress lint warnings for the issue tested
+		@SuppressWarnings({"PMD.UnusedLocalVariable", "ResourceType", "UnusedDeclaration"})
 		final Request<Object> request
 				= restResource.saveObject(Request.Method.DELETE, resourceParams,
 				new DummyListener<>(), null, new Object());

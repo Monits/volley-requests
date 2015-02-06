@@ -157,7 +157,6 @@ task pmd(type: Pmd) {
         "java-braces",
         "java-android",
         "java-clone",
-        "java-codesize",
         "java-design",
         "java-empty",
         "java-finalizers",
