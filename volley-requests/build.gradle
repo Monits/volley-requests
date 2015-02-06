@@ -199,7 +199,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: 'test') {
     }
     classDirectories = fileTree(
         dir: "$project.buildDir/intermediates/classes/debug",
-        excludes: ['**/R*.class'])
+        excludes: ['**/R\$*.class'])
     sourceDirectories = files(['src/main/java'])
     executionData = files("$buildDir/jacoco/testDebug.exec")
 }
