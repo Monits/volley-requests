@@ -47,7 +47,7 @@ public class RequeueAfterRequestDecoratorTest
 		decorator.parseNetworkError(error);
 		verify(retryPolicy).retry(any(VolleyError.class));
 
-		final ArgumentCaptor<Listener> listener = ArgumentCaptor.forClass(Listener.class);
+		final ArgumentCaptor<Listener	> listener = ArgumentCaptor.forClass(Listener.class);
 		final ArgumentCaptor<ErrorListener> errorListener = ArgumentCaptor.forClass(ErrorListener.class);
 		verify(requeuePolicy).executeBeforeRequeueing(listener.capture(), errorListener.capture());
 

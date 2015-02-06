@@ -3,7 +3,8 @@
 Volley Requests is a library project which contains several request
 implementations and utilities based on Android's Volley library.
 
-[![Build Status](https://travis-ci.org/Monits/volley-requests.png)](https://travis-ci.org/Monits/volley-requests)
+[![Build Status](https://travis-ci.org/Monits/volley-requests.svg?branch=master)](https://travis-ci.org/Monits/volley-requests)
+[![Coverage Status](https://coveralls.io/repos/Monits/volley-requests/badge.svg?branch=master)](https://coveralls.io/r/Monits/volley-requests?branch=master)
 
 # Usage
 
