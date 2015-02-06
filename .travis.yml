@@ -3,6 +3,8 @@ android:
   components:
     - platform-tools
     - tools
+after_success:
+  - gradle :volley-requests:jacocoTestReport :volley-requests:coveralls
 notifications:
   email:
     recipients:

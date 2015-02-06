@@ -3,6 +3,8 @@ apply plugin: 'maven'
 apply plugin: 'findbugs'
 apply plugin: 'pmd'
 apply plugin: 'checkstyle'
+apply plugin: 'jacoco'
+apply plugin: 'com.github.kt3k.coveralls'
 
 version = "1.1.0-SNAPSHOT"
 group = "com.monits"
@@ -183,6 +185,24 @@ check << {
 }
 
 check.dependsOn 'checkstyle', 'pmd', 'findbugs'
+
+jacoco {
+    toolVersion '0.7.2.201409121644'
+}
+
+// Code coverage!
+task jacocoTestReport(type: JacocoReport, dependsOn: 'test') {
+    group = 'Reporting'
+    description = 'Generate Jacoco coverage reports after running tests.'
+    reports {
+        xml.enabled = true
+    }
+    classDirectories = fileTree(
+        dir: "$project.buildDir/intermediates/classes/debug",
+        excludes: ['**/R*.class'])
+    sourceDirectories = files(['src/main/java'])
+    executionData = files("$buildDir/jacoco/testDebug.exec")
+}
 
 // Generate sources
 task sourcesJar(type: Jar) {
