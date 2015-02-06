@@ -10,7 +10,7 @@ import org.robolectric.RobolectricTestRunner;
 import static junit.framework.Assert.assertNull;
 
 @RunWith(RobolectricTestRunner.class)
-public class EmptyResponseRequestTest extends AbstractRfcCompliantListenableRequestTest<Void, EmptyResponseRequest> {
+public class EmptyResponseRequestTest extends AbstractJsonRfcCompliantListenableRequestTest<Void, EmptyResponseRequest> {
 
 	@Override
 	protected EmptyResponseRequest newRequest(final int method,
