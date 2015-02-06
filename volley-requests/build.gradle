@@ -186,11 +186,11 @@ check << {
 
 check.dependsOn 'checkstyle', 'pmd', 'findbugs'
 
+// Code coverage!
 jacoco {
     toolVersion '0.7.2.201409121644'
 }
 
-// Code coverage!
 task jacocoTestReport(type: JacocoReport, dependsOn: 'test') {
     group = 'Reporting'
     description = 'Generate Jacoco coverage reports after running tests.'
@@ -202,6 +202,10 @@ task jacocoTestReport(type: JacocoReport, dependsOn: 'test') {
         excludes: ['**/R*.class'])
     sourceDirectories = files(['src/main/java'])
     executionData = files("$buildDir/jacoco/testDebug.exec")
+}
+
+coveralls {
+    jacocoReportPath = "$project.buildDir/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
 }
 
 // Generate sources
