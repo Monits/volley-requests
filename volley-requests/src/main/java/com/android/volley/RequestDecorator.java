@@ -2,43 +2,42 @@ package com.android.volley;
 
 import android.support.annotation.NonNull;
 
-import java.util.Map;
-
 import com.android.volley.Cache.Entry;
+
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public abstract class RequestDecorator<T> extends Request<T> {
-	private final Request<T> request;
+	protected final Request<T> wrapped;
 
-	public RequestDecorator(@NonNull final Request<T> request, final int method,
-					@NonNull final String url) {
-		super(method, url, null);
-		this.request = request;
+	public RequestDecorator(@NonNull final Request<T> request) {
+		super(request.getMethod(), request.getUrl(), null);
+		this.wrapped = request;
 	}
 
 	public Request<T> getRequest() {
-		return request;
+		return wrapped;
 	}
 
 	@Override
 	public int getMethod() {
-		return request.getMethod();
+		return wrapped.getMethod();
 	}
 
 	@Override
 	public Request<?> setTag(final Object tag) {
-		return request.setTag(tag);
+		return wrapped.setTag(tag);
 	}
 
 	@Override
 	public Object getTag() {
-		return request.getTag();
+		return wrapped.getTag();
 	}
 
 	@Override
 	public int getTrafficStatsTag() {
-		return request.getTrafficStatsTag();
+		return wrapped.getTrafficStatsTag();
 	}
 
 	@SuppressFBWarnings(value = "UR_UNINIT_READ_CALLED_FROM_SUPER_CONSTRUCTOR",
@@ -46,115 +45,115 @@ public abstract class RequestDecorator<T> extends Request<T> {
 	@Override
 	public Request<?> setRetryPolicy(final RetryPolicy retryPolicy) {
 		//noinspection ConstantConditions
-		if (request != null) {
-            // Method is called from constructor, before we initialize request
-			request.setRetryPolicy(retryPolicy);
+		if (wrapped != null) {
+            // Method is called from constructor, before we initialize wrapped
+			wrapped.setRetryPolicy(retryPolicy);
 		}
 		return super.setRetryPolicy(retryPolicy);
 	}
 
 	@Override
 	public void addMarker(final String tag) {
-		request.addMarker(tag);
+		wrapped.addMarker(tag);
 	}
 
 	@Override
 	public Request<?> setRequestQueue(final RequestQueue requestQueue) {
-		return request.setRequestQueue(requestQueue);
+		return wrapped.setRequestQueue(requestQueue);
 	}
 
 	@Override
 	public String getUrl() {
-		return request.getUrl();
+		return wrapped.getUrl();
 	}
 
 	@Override
 	public String getCacheKey() {
-		return request.getCacheKey();
+		return wrapped.getCacheKey();
 	}
 
 	@Override
 	public Request<?> setCacheEntry(final Entry entry) {
-		return request.setCacheEntry(entry);
+		return wrapped.setCacheEntry(entry);
 	}
 
 	@Override
 	public Entry getCacheEntry() {
-		return request.getCacheEntry();
+		return wrapped.getCacheEntry();
 	}
 
 	@Override
 	public void cancel() {
-		request.cancel();
+		wrapped.cancel();
 	}
 
 	@Override
 	public boolean isCanceled() {
-		return request.isCanceled();
+		return wrapped.isCanceled();
 	}
 
 	@Override
 	public Map<String, String> getHeaders() throws AuthFailureError {
-		return request.getHeaders();
+		return wrapped.getHeaders();
 	}
 
 	@Override
 	public String getPostBodyContentType() {
-		return request.getPostBodyContentType();
+		return wrapped.getPostBodyContentType();
 	}
 
 	@Override
 	public byte[] getPostBody() throws AuthFailureError {
-		return request.getPostBody();
+		return wrapped.getPostBody();
 	}
 
 	@Override
 	public String getBodyContentType() {
-		return request.getBodyContentType();
+		return wrapped.getBodyContentType();
 	}
 
 	@Override
 	public byte[] getBody() throws AuthFailureError {
-		return request.getBody();
+		return wrapped.getBody();
 	}
 
 	@Override
 	public com.android.volley.Request.Priority getPriority() {
-		return request.getPriority();
+		return wrapped.getPriority();
 	}
 
 	@Override
 	public RetryPolicy getRetryPolicy() {
-		return request.getRetryPolicy();
+		return wrapped.getRetryPolicy();
 	}
 
 	@Override
 	public void markDelivered() {
-		request.markDelivered();
+		wrapped.markDelivered();
 	}
 
 	@Override
 	public boolean hasHadResponseDelivered() {
-		return request.hasHadResponseDelivered();
+		return wrapped.hasHadResponseDelivered();
 	}
 
 	@Override
 	public void deliverError(final VolleyError error) {
-		request.deliverError(error);
+		wrapped.deliverError(error);
 	}
 
 	@Override
 	public String toString() {
-		return "RequestDecorator for " + request;
+		return "RequestDecorator for " + wrapped;
 	}
 
 	@Override
 	protected Response<T> parseNetworkResponse(final NetworkResponse response) {
-		return request.parseNetworkResponse(response);
+		return wrapped.parseNetworkResponse(response);
 	}
 
 	@Override
 	protected void deliverResponse(final T response) {
-		request.deliverResponse(response);
+		wrapped.deliverResponse(response);
 	}
 }

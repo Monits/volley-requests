@@ -21,9 +21,8 @@ import com.android.volley.toolbox.HttpHeaderParser;
 public class JSONArrayRequestDecorator<T> extends RequestDecorator<T> {
 	private final String elementsKey;
 
-	public JSONArrayRequestDecorator(@NonNull final Request<T> request, final int method,
-					@NonNull final String url, @NonNull final String elementsKey) {
-		super(request, method, url);
+	public JSONArrayRequestDecorator(@NonNull final Request<T> request, @NonNull final String elementsKey) {
+		super(request);
 		this.elementsKey = elementsKey;
 	}
 

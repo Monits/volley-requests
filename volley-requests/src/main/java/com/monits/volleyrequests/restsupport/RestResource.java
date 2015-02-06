@@ -191,8 +191,8 @@ public class RestResource<T> {
 
 		final Request<List<T>> request = createRequest(Method.GET, this.hostAndPort + url,
 						listTypeToken, listener, errListener, null);
-		final JSONArrayRequestDecorator<List<T>> jsonRequest = new JSONArrayRequestDecorator<>(request,
-						Method.GET, url, elementsKey);
+		final JSONArrayRequestDecorator<List<T>> jsonRequest = new JSONArrayRequestDecorator<>(
+				request, elementsKey);
 		configureRequest(jsonRequest);
 		return jsonRequest;
 	}
@@ -285,8 +285,8 @@ public class RestResource<T> {
 		final String url = generateFullUrl(resourceParams, queryParams);
 		final Request<T> request = createRequest(method, this.hostAndPort + url, this.clazz,
 						listener, errListener, object);
-		final MaybeRequestDecorator<T> maybeRequestDecorator = new MaybeRequestDecorator<>(request,
-						method, url, object);
+		final MaybeRequestDecorator<T> maybeRequestDecorator = new MaybeRequestDecorator<>(
+				request, object);
 		configureRequest(maybeRequestDecorator);
 		return maybeRequestDecorator;
 	}
