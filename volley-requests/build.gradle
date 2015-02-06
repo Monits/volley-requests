@@ -25,6 +25,7 @@ android {
         versionName project.version
         minSdkVersion 8
         targetSdkVersion 21
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -33,26 +34,51 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
 }
+
+// This NEEDS to be after we define android.compileSdkVersion of it falls apart
+apply plugin: 'android-unit-test'
 
 dependencies {
     compile files('libs/volley.jar')
     compile 'com.android.support:support-v4:21.0.3'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.google.guava:guava:18.0'
-
     provided 'com.google.code.findbugs:annotations:3.0.0'
-
     checkstyle 'com.puppycrawl.tools:checkstyle:6.2'
-
     findbugs 'com.google.code.findbugs:findbugs:3.0.0'
     findbugs configurations.findbugsPlugins.dependencies
-
     // To keep everything tidy, we set these apart
     findbugsPlugins('com.monits:findbugs-plugin:0.1.0-SNAPSHOT') {
         transitive = false
     }
     findbugsPlugins 'com.mebigfatguy.fb-contrib:fb-contrib:6.0.0'
+    // Robolectric
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.hamcrest:hamcrest-core:1.1'
+    testCompile 'org.hamcrest:hamcrest-library:1.1'
+    testCompile 'org.hamcrest:hamcrest-integration:1.1'
+    testCompile('org.robolectric:robolectric:2.4') {
+        exclude module: 'classworlds'
+        exclude module: 'commons-logging'
+        exclude module: 'httpclient'
+        exclude module: 'maven-artifact'
+        exclude module: 'maven-artifact-manager'
+        exclude module: 'maven-error-diagnostics'
+        exclude module: 'maven-model'
+        exclude module: 'maven-project'
+        exclude module: 'maven-settings'
+        exclude module: 'plexus-container-default'
+        exclude module: 'plexus-interpolation'
+        exclude module: 'plexus-utils'
+        exclude module: 'wagon-file'
+        exclude module: 'wagon-http-lightweight'
+        exclude module: 'wagon-provider-api'
+    }
 }
 
 configurations {
@@ -69,13 +95,15 @@ configurations {
 
 // linters!
 task downloadCheckstyleXml {
-    new File("${project.rootDir}/config/checkstyle/").mkdirs()
-    ant.get(src: 'http://static.monits.com/checkstyle.xml', dest: "${project.rootDir}/config/checkstyle/checkstyle.xml")
+    new File("${rootProject.projectDir}/config/checkstyle/").mkdirs()
+    ant.get(src: 'http://static.monits.com/checkstyle.xml', dest: "${rootProject.projectDir}/config/checkstyle/checkstyle.xml")
+}
+
+checkstyle {
+    configFile file("${rootProject.projectDir}/config/checkstyle/checkstyle.xml")
 }
 
 task checkstyle(type: Checkstyle, dependsOn: downloadCheckstyleXml) {
-    configFile file("${project.rootDir}/config/checkstyle/checkstyle.xml")
-
     source 'src'
     include '**/*.java'
     exclude '**/gen/**'
@@ -85,15 +113,13 @@ task checkstyle(type: Checkstyle, dependsOn: downloadCheckstyleXml) {
 
 task findbugs(type: FindBugs) {
     dependsOn project.tasks.withType(JavaCompile)
-    classes = files("$project.buildDir/intermediates/classes/")
+
     ignoreFailures = true
     effort = "max"
 
     source 'src'
     include '**/*.java'
     exclude '**/gen/**'
-
-    excludeFilter = file("$rootProject.projectDir/config/findbugs/excludeFilter.xml")
 
     reports {
         xml {
@@ -104,6 +130,12 @@ task findbugs(type: FindBugs) {
 
     pluginClasspath = project.configurations.findbugsPlugins
     classpath = project.configurations.compile
+}
+
+// when using 'android-unit-test' we need to set it like this...
+tasks.withType(FindBugs) {
+    excludeFilter = file("$rootProject.projectDir/config/findbugs/excludeFilter.xml")
+    classes = files("$project.buildDir/intermediates/classes/")
 }
 
 task pmd(type: Pmd) {
