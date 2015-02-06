@@ -16,6 +16,7 @@
 package com.monits.volleyrequests.network;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
@@ -37,7 +38,8 @@ public class NullSafeImageLoader extends ImageLoader {
 	}
 
 	@Override
-	public ImageContainer get(final String requestUrl, final ImageListener imageListener,
+	public ImageContainer get(@Nullable final String requestUrl,
+					@NonNull final ImageListener imageListener,
 					final int maxWidth, final int maxHeight) {
 		
 		if (requestUrl == null) {

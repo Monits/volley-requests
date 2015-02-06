@@ -13,6 +13,7 @@ import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static org.junit.Assert.assertEquals;
 
@@ -52,7 +53,7 @@ public class RestResourceTest {
 
 	@Test
 	public void testGetAllWithQuery() {
-		final Map<String, String> queryParams = new HashMap<>();
+		final Map<String, String> queryParams = new TreeMap<>();	// We need a known order
 		queryParams.put(QUERY_PARAM_1, QUERY_VALUE_1);
 		queryParams.put(QUERY_PARAM_2, QUERY_VALUE_2);
 
