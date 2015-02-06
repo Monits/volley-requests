@@ -53,6 +53,11 @@ public abstract class RequestDecorator<T> extends Request<T> {
 	}
 
 	@Override
+	protected VolleyError parseNetworkError(final VolleyError volleyError) {
+		return wrapped.parseNetworkError(volleyError);
+	}
+
+	@Override
 	public void addMarker(final String tag) {
 		wrapped.addMarker(tag);
 	}

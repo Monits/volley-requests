@@ -12,8 +12,8 @@ import static org.mockito.Mockito.verify;
 
 @Ignore("This is an abstract class to provide base tests, don't run it on it's own!")
 @SuppressWarnings("PMD.TooManyStaticImports")
-public abstract class AbstractRequestDecoratorTest {
-	protected RequestDecorator<Object> decorator;
+public abstract class AbstractRequestDecoratorTest<T extends RequestDecorator<Object>> {
+	protected T decorator;
 	protected Request<Object> request;
 
 	@Before
@@ -24,8 +24,7 @@ public abstract class AbstractRequestDecoratorTest {
 	}
 
 	@NonNull
-	protected abstract RequeueAfterRequestDecorator<Object> newRequestDecorator(
-			final Request<Object> request);
+	protected abstract T newRequestDecorator(final Request<Object> request);
 
 	@Test
 	public void testDeliverResponseDelegate() {

@@ -15,7 +15,8 @@ import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricTestRunner.class)
 @SuppressWarnings("PMD.TooManyStaticImports")
-public class RequeueAfterRequestDecoratorTest extends AbstractRequestDecoratorTest {
+public class RequeueAfterRequestDecoratorTest
+		extends AbstractRequestDecoratorTest<RequeueAfterRequestDecorator<Object>> {
 	private RequeuePolicy requeuePolicy;
 
 	@NonNull
