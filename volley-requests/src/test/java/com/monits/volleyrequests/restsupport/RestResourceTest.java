@@ -21,8 +21,10 @@ public class RestResourceTest {
 
 	private static final String GET_ALL_URL = "http://test.domain.com/users";
 
-	private static final String QUERY_PARAM = "PARAM";
-	private static final String QUERY_VALUE = "VALUE";
+	private static final String QUERY_PARAM_1 = "PARAM1";
+	private static final String QUERY_VALUE_1 = "VALUE1";
+	private static final String QUERY_PARAM_2 = "PARAM2";
+	private static final String QUERY_VALUE_2 = "VALUE2";
 
 	private static final String RESOURCE_PARAM_USER_ID = "userId";
 	private static final String RESOURCE_VALUE_USER_ID = "123456";
@@ -51,13 +53,15 @@ public class RestResourceTest {
 	@Test
 	public void testGetAllWithQuery() {
 		final Map<String, String> queryParams = new HashMap<>();
-		queryParams.put(QUERY_PARAM, QUERY_VALUE);
+		queryParams.put(QUERY_PARAM_1, QUERY_VALUE_1);
+		queryParams.put(QUERY_PARAM_2, QUERY_VALUE_2);
 
 		final Request<List<Object>> request
 				= restResource.getAll(null, queryParams, new DummyListener<List<Object>>(), null);
 
 		assertEquals("Generated url not as expected.",
-				GET_ALL_URL + "?" + QUERY_PARAM + "=" + QUERY_VALUE, request.getUrl());
+				GET_ALL_URL + "?" + QUERY_PARAM_1 + "=" + QUERY_VALUE_1
+						+ "&" + QUERY_PARAM_2 + "=" + QUERY_VALUE_2, request.getUrl());
 		assertEquals("Request Method not as expected.", Request.Method.GET, request.getMethod());
 	}
 
@@ -95,13 +99,13 @@ public class RestResourceTest {
 		resourceParams.put(RESOURCE_PARAM_USER_ID, RESOURCE_VALUE_USER_ID);
 
 		final Map<String, String> queryParams = new HashMap<>();
-		queryParams.put(QUERY_PARAM, QUERY_VALUE);
+		queryParams.put(QUERY_PARAM_1, QUERY_VALUE_1);
 
 		final Request<Object> request = restResource.getObject(resourceParams,
 				queryParams, new DummyListener<>(), null);
 
 		assertEquals("Generated url not as expected.",
-				GET_ALL_URL + "/" + RESOURCE_VALUE_USER_ID + "?" + QUERY_PARAM + "=" + QUERY_VALUE,
+				GET_ALL_URL + "/" + RESOURCE_VALUE_USER_ID + "?" + QUERY_PARAM_1 + "=" + QUERY_VALUE_1,
 				request.getUrl());
 		assertEquals("Request Method not as expected.", Request.Method.GET, request.getMethod());
 	}
@@ -128,6 +132,17 @@ public class RestResourceTest {
 		assertEquals("Request Method not as expected.", Request.Method.DELETE, request.getMethod());
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testSaveIllegalMethod() {
+		final Map<String, String> resourceParams = new HashMap<>();
+		resourceParams.put(RESOURCE_PARAM_USER_ID, RESOURCE_VALUE_USER_ID);
+
+		@SuppressWarnings("ResourceType")	// Suppress lint warning for the issue tested
+		final Request<Object> request
+				= restResource.saveObject(Request.Method.DELETE, resourceParams,
+				new DummyListener<>(), null, new Object());
+	}
+
 	@Test
 	public void testSave() {
 		final Map<String, String> resourceParams = new HashMap<>();
@@ -148,14 +163,14 @@ public class RestResourceTest {
 		resourceParams.put(RESOURCE_PARAM_USER_ID, RESOURCE_VALUE_USER_ID);
 
 		final Map<String, String> queryParams = new HashMap<>();
-		queryParams.put(QUERY_PARAM, QUERY_VALUE);
+		queryParams.put(QUERY_PARAM_1, QUERY_VALUE_1);
 
 		final Request<Object> request
 				= restResource.saveObject(Request.Method.PUT, resourceParams, queryParams,
 				new DummyListener<>(), null, new Object());
 
 		assertEquals("Generated url not as expected.",
-				GET_ALL_URL + "/" + RESOURCE_VALUE_USER_ID + "?" + QUERY_PARAM + "=" + QUERY_VALUE,
+				GET_ALL_URL + "/" + RESOURCE_VALUE_USER_ID + "?" + QUERY_PARAM_1 + "=" + QUERY_VALUE_1,
 				request.getUrl());
 		assertEquals("Request Method not as expected.", Request.Method.PUT, request.getMethod());
 	}

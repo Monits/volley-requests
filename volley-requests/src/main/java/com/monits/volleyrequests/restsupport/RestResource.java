@@ -16,9 +16,12 @@
 
 package com.monits.volleyrequests.restsupport;
 
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -52,9 +55,13 @@ import com.monits.volleyrequests.network.request.GsonRequest;
  *
  */
 public class RestResource<T> {
+	@Retention(RetentionPolicy.SOURCE)
+	@IntDef({ Method.POST, Method.PUT })
+	public @interface SaveMethod {}
+
 	private static final String PARAMETERS_REGEX = "/(:([^/]+))";
-	private static final String REMOVE_MULTIPLE_SLASH = "\\/{2,}";
-	private static final String REMOVE_FINAL_SLASH = "\\/$";
+	private static final String REMOVE_MULTIPLE_SLASH = "/{2,}";
+	private static final String REMOVE_FINAL_SLASH = "/$";
 	private static final Pattern PATTERN = Pattern.compile(PARAMETERS_REGEX);
 	protected final Gson gson;
 	private final String resource;
@@ -105,7 +112,7 @@ public class RestResource<T> {
 					@NonNull final Type type, @NonNull final Listener<K> listener,
 					@Nullable final ErrorListener errListener, @Nullable final T object) {
 		final String jsonBody  = object == null ? null : gson.toJson(object);
-		return new GsonRequest<K>(method, url, this.gson,
+		return new GsonRequest<>(method, url, this.gson,
 				type, listener, errListener, jsonBody);
 	}
 
@@ -184,7 +191,7 @@ public class RestResource<T> {
 
 		final Request<List<T>> request = createRequest(Method.GET, this.hostAndPort + url,
 						listTypeToken, listener, errListener, null);
-		final JSONArrayRequestDecorator<List<T>> jsonRequest = new JSONArrayRequestDecorator<List<T>>(request,
+		final JSONArrayRequestDecorator<List<T>> jsonRequest = new JSONArrayRequestDecorator<>(request,
 						Method.GET, url, elementsKey);
 		configureRequest(jsonRequest);
 		return jsonRequest;
@@ -194,16 +201,16 @@ public class RestResource<T> {
 	 * Create the GsonRequest for a GET request and give a request for a collection.
 	 *
 	 * Example: If your resource is /user/:userId this method create
-	 * the url /user or if your resource is /user/:userId/card/:cardId, the new
-	 * url is /user/123/card. We need to use guava {@code TypeToken} because
+	 * the url {@code /user} or if your resource is {@code /user/:userId/card/:cardId}, the new
+	 * url is {@code /user/123/card}. We need to use guava {@code TypeToken} because
 	 * {@code Gson.TypeToken} cannot accept {@code TypeToken<List<T>>}. Until Gson update this
 	 * we will use guava
 	 *
 	 * @param resourceParams
 	 *            A Map with the value of the parameters that must be replaced
 	 *            in the url resource. The key of the map must be the name of
-	 *            the parameter in the url. Example, url = "/user/:userId" and
-	 *            the map must contains {"userId", "123}
+	 *            the parameter in the url. Example, {@code url = "/user/:userId"} and
+	 *            the map must contains {@code \{"userId", "123"\}}
 	 * @param listener
 	 *            The listener for success.getAllResource
 	 * @param errListener
@@ -219,7 +226,7 @@ public class RestResource<T> {
 	 * Create the GsonRequest for a POST or PUT request from the resource.
 	 *
 	 * @param method
-	 *            Supported method Method.PUT or Method.POST
+	 *            Supported method {@link Method#PUT} or {@link Method#POST}
 	 * @param resourceParams
 	 *            A Map with the value of the parameters that must be replaced
 	 *            in the url resource. The key of the map must be the name of
@@ -236,7 +243,7 @@ public class RestResource<T> {
 	 *             In case that the method receive is different from Method.POST
 	 *             or Method.PUT
 	 */
-	public Request<T> saveObject(final int method,
+	public Request<T> saveObject(@SaveMethod final int method,
 					@Nullable final Map<String, String> resourceParams,
 					@NonNull final Listener<T> listener, @Nullable final ErrorListener errListener,
 					@NonNull final T object) {
@@ -247,7 +254,7 @@ public class RestResource<T> {
 	/**
 	 *
 	 * @param method
-	 *            Supported method Method.PUT or Method.POST
+	 *            Supported method {@link Method#PUT} or {@link Method#POST}
 	 * @param resourceParams
 	 *            A Map with the value of the parameters that must be replaced
 	 *            in the url resource. The key of the map must be the name of
@@ -266,7 +273,7 @@ public class RestResource<T> {
 	 *             In case that the method receive is different from Method.POST
 	 *             or Method.PUT
 	 */
-	public Request<T> saveObject(final int method,
+	public Request<T> saveObject(@SaveMethod final int method,
 					@Nullable final Map<String, String> resourceParams,
 					@Nullable final Map<String, String> queryParams,
 					@NonNull final Listener<T> listener,
@@ -278,7 +285,7 @@ public class RestResource<T> {
 		final String url = generateFullUrl(resourceParams, queryParams);
 		final Request<T> request = createRequest(method, this.hostAndPort + url, this.clazz,
 						listener, errListener, object);
-		final MaybeRequestDecorator<T> maybeRequestDecorator = new MaybeRequestDecorator<T>(request,
+		final MaybeRequestDecorator<T> maybeRequestDecorator = new MaybeRequestDecorator<>(request,
 						method, url, object);
 		configureRequest(maybeRequestDecorator);
 		return maybeRequestDecorator;
@@ -386,10 +393,7 @@ public class RestResource<T> {
 	 * @return {protocol}://{authority}
 	 */
 	private String prepareHostURL(@NonNull final URL url) {
-		final StringBuilder builder = new StringBuilder();
-		builder.append(url.getProtocol()).append("://")
-				.append(url.getAuthority());
-		return builder.toString();
+		return url.getProtocol() + "://" + url.getAuthority();
 	}
 
 	/**
