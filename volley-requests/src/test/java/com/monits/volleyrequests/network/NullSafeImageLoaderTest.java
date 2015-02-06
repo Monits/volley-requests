@@ -21,12 +21,11 @@ public class NullSafeImageLoaderTest {
 	private NullSafeImageLoader imageLoader;
 
 	private RequestQueue queue;
-	private ImageLoader.ImageCache cache;
 
 	@Before
 	public void setUp() throws MalformedURLException {
 		queue = mock(RequestQueue.class);
-		cache = mock(ImageLoader.ImageCache.class);
+		final ImageLoader.ImageCache cache = mock(ImageLoader.ImageCache.class);
 
 		imageLoader = new NullSafeImageLoader(queue, cache);
 	}

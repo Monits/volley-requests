@@ -117,7 +117,7 @@ public final class RequeueAfterRequestDecorator<T> extends Request<T> {
 			return null;
 		}
 
-		return super.parseNetworkError(volleyError);
+		return wrapped.parseNetworkError(volleyError);
 	}
 
 	// Wrapper methods
