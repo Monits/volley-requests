@@ -117,7 +117,6 @@ task checkstyle(type: Checkstyle, dependsOn: downloadCheckstyleXml) {
 task findbugs(type: FindBugs) {
     dependsOn project.tasks.withType(JavaCompile)
 
-    ignoreFailures = true
     effort = "max"
 
     source 'src'
@@ -137,6 +136,7 @@ task findbugs(type: FindBugs) {
 
 // when using 'android-unit-test' we need to set it like this...
 tasks.withType(FindBugs) {
+    ignoreFailures = true
     excludeFilter = file("$rootProject.projectDir/config/findbugs/excludeFilter.xml")
     classes = files("$project.buildDir/intermediates/classes/")
 }

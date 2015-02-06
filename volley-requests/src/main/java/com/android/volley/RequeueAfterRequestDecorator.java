@@ -65,6 +65,12 @@ public final class RequeueAfterRequestDecorator<T> extends RequestDecorator<T> {
 		return new RequeueAfterRequestDecorator<>(request, requeuePolicy);
 	}
 
+	@Override
+	public Request<?> setRequestQueue(final RequestQueue requestQueue) {
+		queue = requestQueue;
+		return super.setRequestQueue(requestQueue);
+	}
+
 	@Nullable
 	@Override
 	protected VolleyError parseNetworkError(final VolleyError volleyError) {
