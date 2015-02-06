@@ -46,8 +46,8 @@ public class RestResourceTest {
 		final Request<List<Object>> request
 				= restResource.getAll(null, new DummyListener<List<Object>>(), null);
 
-		assertEquals("Generated url not as expected.", GET_ALL_URL, request.getUrl());
-		assertEquals("Request Method not as expected.", Request.Method.GET, request.getMethod());
+		assertEquals(GET_ALL_URL, request.getUrl());
+		assertEquals(Request.Method.GET, request.getMethod());
 	}
 
 	@Test
@@ -59,10 +59,9 @@ public class RestResourceTest {
 		final Request<List<Object>> request
 				= restResource.getAll(null, queryParams, new DummyListener<List<Object>>(), null);
 
-		assertEquals("Generated url not as expected.",
-				GET_ALL_URL + "?" + QUERY_PARAM_1 + "=" + QUERY_VALUE_1
+		assertEquals(GET_ALL_URL + "?" + QUERY_PARAM_1 + "=" + QUERY_VALUE_1
 						+ "&" + QUERY_PARAM_2 + "=" + QUERY_VALUE_2, request.getUrl());
-		assertEquals("Request Method not as expected.", Request.Method.GET, request.getMethod());
+		assertEquals(Request.Method.GET, request.getMethod());
 	}
 
 	@Test
@@ -74,10 +73,9 @@ public class RestResourceTest {
 		final Request<Object> request
 				= restResource.getObject(resourceParams, new DummyListener<>(), null);
 
-		assertEquals("Generated url not as expected.",
-				GET_ALL_URL + "/" + RESOURCE_VALUE_USER_ID + "/" + RESOURCE_VALUE_FIELD,
+		assertEquals(GET_ALL_URL + "/" + RESOURCE_VALUE_USER_ID + "/" + RESOURCE_VALUE_FIELD,
 				request.getUrl());
-		assertEquals("Request Method not as expected.", Request.Method.GET, request.getMethod());
+		assertEquals(Request.Method.GET, request.getMethod());
 	}
 
 	@Test
@@ -88,9 +86,8 @@ public class RestResourceTest {
 		final Request<Object> request
 				= restResource.getObject(resourceParams, new DummyListener<>(), null);
 
-		assertEquals("Generated url not as expected.",
-				GET_ALL_URL + "/" + RESOURCE_VALUE_USER_ID, request.getUrl());
-		assertEquals("Request Method not as expected.", Request.Method.GET, request.getMethod());
+		assertEquals(GET_ALL_URL + "/" + RESOURCE_VALUE_USER_ID, request.getUrl());
+		assertEquals(Request.Method.GET, request.getMethod());
 	}
 
 	@Test
@@ -104,10 +101,9 @@ public class RestResourceTest {
 		final Request<Object> request = restResource.getObject(resourceParams,
 				queryParams, new DummyListener<>(), null);
 
-		assertEquals("Generated url not as expected.",
-				GET_ALL_URL + "/" + RESOURCE_VALUE_USER_ID + "?" + QUERY_PARAM_1 + "=" + QUERY_VALUE_1,
+		assertEquals(GET_ALL_URL + "/" + RESOURCE_VALUE_USER_ID + "?" + QUERY_PARAM_1 + "=" + QUERY_VALUE_1,
 				request.getUrl());
-		assertEquals("Request Method not as expected.", Request.Method.GET, request.getMethod());
+		assertEquals(Request.Method.GET, request.getMethod());
 	}
 
 	@Test
@@ -115,8 +111,8 @@ public class RestResourceTest {
 		final Request<Object> request
 				= restResource.deleteObject(new DummyListener<>(), null);
 
-		assertEquals("Generated url not as expected.", GET_ALL_URL, request.getUrl());
-		assertEquals("Request Method not as expected.", Request.Method.DELETE, request.getMethod());
+		assertEquals(GET_ALL_URL, request.getUrl());
+		assertEquals(Request.Method.DELETE, request.getMethod());
 	}
 
 	@Test
@@ -127,9 +123,8 @@ public class RestResourceTest {
 		final Request<Object> request = restResource.deleteObject(resourceParams,
 				new DummyListener<>(), null);
 
-		assertEquals("Generated url not as expected.",
-				GET_ALL_URL + "/" + RESOURCE_VALUE_USER_ID, request.getUrl());
-		assertEquals("Request Method not as expected.", Request.Method.DELETE, request.getMethod());
+		assertEquals(GET_ALL_URL + "/" + RESOURCE_VALUE_USER_ID, request.getUrl());
+		assertEquals(Request.Method.DELETE, request.getMethod());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -152,9 +147,8 @@ public class RestResourceTest {
 				= restResource.saveObject(Request.Method.POST, resourceParams,
 				new DummyListener<>(), null, new Object());
 
-		assertEquals("Generated url not as expected.",
-				GET_ALL_URL + "/" + RESOURCE_VALUE_USER_ID, request.getUrl());
-		assertEquals("Request Method not as expected.", Request.Method.POST, request.getMethod());
+		assertEquals(GET_ALL_URL + "/" + RESOURCE_VALUE_USER_ID, request.getUrl());
+		assertEquals(Request.Method.POST, request.getMethod());
 	}
 
 	@Test
@@ -169,16 +163,16 @@ public class RestResourceTest {
 				= restResource.saveObject(Request.Method.PUT, resourceParams, queryParams,
 				new DummyListener<>(), null, new Object());
 
-		assertEquals("Generated url not as expected.",
-				GET_ALL_URL + "/" + RESOURCE_VALUE_USER_ID + "?" + QUERY_PARAM_1 + "=" + QUERY_VALUE_1,
+		assertEquals(GET_ALL_URL + "/" + RESOURCE_VALUE_USER_ID + "?" + QUERY_PARAM_1 + "=" + QUERY_VALUE_1,
 				request.getUrl());
-		assertEquals("Request Method not as expected.", Request.Method.PUT, request.getMethod());
+		assertEquals(Request.Method.PUT, request.getMethod());
 	}
 
 	// Dummy empty implementation of listener class.
 	private static class DummyListener<T> implements Response.Listener<T> {
 		@Override
 		public void onResponse(final T objects) {
+			// Dummy method does nothing
 		}
 	}
 }
