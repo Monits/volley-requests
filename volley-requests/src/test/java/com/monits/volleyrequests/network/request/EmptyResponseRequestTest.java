@@ -1,7 +1,6 @@
 package com.monits.volleyrequests.network.request;
 
 import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
 import com.android.volley.Response;
 
 import org.junit.Test;
@@ -13,9 +12,10 @@ import static junit.framework.Assert.assertNull;
 @RunWith(RobolectricTestRunner.class)
 public class EmptyResponseRequestTest extends AbstractRfcCompliantListenableRequestTest<Void, EmptyResponseRequest> {
 
-	protected EmptyResponseRequest newRequestWithMethod(final int method) {
-		return new EmptyResponseRequest(method, "http://www.google.com/",
-				new DummyListener<Void>(), null, null);
+	@Override
+	protected EmptyResponseRequest newRequest(final int method,
+				final Response.Listener<Void> listener) {
+		return new EmptyResponseRequest(method, "http://www.google.com/", listener, null, null);
 	}
 
 	protected Void newValidResponse() {

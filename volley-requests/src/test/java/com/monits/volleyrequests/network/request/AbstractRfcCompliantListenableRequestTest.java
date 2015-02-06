@@ -3,9 +3,7 @@ package com.monits.volleyrequests.network.request;
 import com.android.volley.Cache;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -19,42 +17,32 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @Ignore("Abstract test class for abstract class, don't run stand alone")
-public abstract class AbstractRfcCompliantListenableRequestTest<S, T extends RfcCompliantListenableRequest<S>> {
-
-	protected T request;
-
-	@Before
-	public void setUp() {
-		request = newRequestWithMethod(Request.Method.GET);
-	}
-
-	protected abstract T newRequestWithMethod(final int method);
-
-	protected abstract S newValidResponse();
+public abstract class AbstractRfcCompliantListenableRequestTest<S, T extends RfcCompliantListenableRequest<S>>
+		extends AbstractListenableRequestTest<S, T> {
 
 	@Test
 	public void testShouldCacheGet() {
-		assertTrue(newRequestWithMethod(Request.Method.GET).shouldCache());
+		assertTrue(newRequest(Request.Method.GET).shouldCache());
 	}
 
 	@Test
 	public void testShouldCacheHead() {
-		assertTrue(newRequestWithMethod(Request.Method.HEAD).shouldCache());
+		assertTrue(newRequest(Request.Method.HEAD).shouldCache());
 	}
 
 	@Test
 	public void testShouldCachePost() {
-		assertFalse(newRequestWithMethod(Request.Method.POST).shouldCache());
+		assertFalse(newRequest(Request.Method.POST).shouldCache());
 	}
 
 	@Test
 	public void testShouldCacheDelete() {
-		assertFalse(newRequestWithMethod(Request.Method.DELETE).shouldCache());
+		assertFalse(newRequest(Request.Method.DELETE).shouldCache());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testShouldCacheDeprectedGetOrPost() {
-		newRequestWithMethod(Request.Method.DEPRECATED_GET_OR_POST);
+		newRequest(Request.Method.DEPRECATED_GET_OR_POST);
 	}
 
 	@Test
@@ -64,7 +52,7 @@ public abstract class AbstractRfcCompliantListenableRequestTest<S, T extends Rfc
 		when(queue.getCache()).thenReturn(cache);
 
 		final Cache.Entry entry = new Cache.Entry();
-		final T r = newRequestWithMethod(Request.Method.GET);
+		final T r = newRequest(Request.Method.GET);
 		r.setCacheEntry(entry);
 		r.setRequestQueue(queue);
 		r.deliverResponse(newValidResponse());
@@ -78,19 +66,11 @@ public abstract class AbstractRfcCompliantListenableRequestTest<S, T extends Rfc
 		final Cache cache = mock(Cache.class);
 		when(queue.getCache()).thenReturn(cache);
 
-		final T r = newRequestWithMethod(Request.Method.GET);
+		final T r = newRequest(Request.Method.GET);
 		// no cache entry is set
 		r.setRequestQueue(queue);
 		r.deliverResponse(newValidResponse());
 
 		verify(cache, never()).put(anyString(), any(Cache.Entry.class));
-	}
-
-	// Dummy empty implementation of listener class.
-	protected static class DummyListener<T> implements Response.Listener<T> {
-		@Override
-		public void onResponse(final T objects) {
-			// Dummy method does nothing
-		}
 	}
 }
