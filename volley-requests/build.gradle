@@ -42,9 +42,6 @@ android {
     }
 }
 
-// This NEEDS to be after we define android.compileSdkVersion of it falls apart
-apply plugin: 'android-unit-test'
-
 dependencies {
     compile files('libs/volley.jar')
     compile 'com.android.support:support-v4:21.0.3'
