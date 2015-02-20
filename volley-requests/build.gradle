@@ -150,20 +150,7 @@ task pmd(type: Pmd) {
         html.enabled = false
     }
 
-    ruleSets = [
-        "java-basic",
-        "java-braces",
-        "java-android",
-        "java-clone",
-        "java-design",
-        "java-empty",
-        "java-finalizers",
-        "java-imports",
-        "java-optimizations",
-        "java-strings",
-        "java-unnecessary",
-        "java-unusedcode"
-    ]
+    ruleSets = ['http://static.monits.com/pmd.xml']
 }
 
 // add CPD to check
