@@ -17,6 +17,7 @@ import java.util.TreeMap;
 
 import static org.junit.Assert.assertEquals;
 
+@SuppressWarnings("checkstyle:multiplestringliterals")
 @RunWith(RobolectricTestRunner.class)
 public class RestResourceTest {
 
@@ -134,9 +135,8 @@ public class RestResourceTest {
 		resourceParams.put(RESOURCE_PARAM_USER_ID, RESOURCE_VALUE_USER_ID);
 
 		// Suppress lint warnings for the issue tested
-		@SuppressWarnings({"PMD.UnusedLocalVariable", "ResourceType", "UnusedDeclaration"})
-		final Request<Object> request
-				= restResource.saveObject(Request.Method.DELETE, resourceParams,
+		//noinspection ResourceType
+		restResource.saveObject(Request.Method.DELETE, resourceParams,
 				new DummyListener<>(), null, new Object());
 	}
 

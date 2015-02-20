@@ -35,7 +35,7 @@ public class RequeueAfterRequestDecoratorTest
 	@SuppressWarnings("ThrowableResultOfMethodCallIgnored")
 	@Test
 	public void testParseNetworkErrorRequeue() throws VolleyError {
-		when(requeuePolicy.shouldRequeue(any(NetworkResponse.class))).thenReturn(true);
+		when(requeuePolicy.shouldRequeue(any(NetworkResponse.class))).thenReturn(Boolean.TRUE);
 		final RetryPolicy retryPolicy = mock(RetryPolicy.class);
 		when(request.getRetryPolicy()).thenReturn(retryPolicy);
 
@@ -62,7 +62,7 @@ public class RequeueAfterRequestDecoratorTest
 
 	@Test
 	public void testParseNetworkErrorCantRetry() throws VolleyError {
-		when(requeuePolicy.shouldRequeue(any(NetworkResponse.class))).thenReturn(true);
+		when(requeuePolicy.shouldRequeue(any(NetworkResponse.class))).thenReturn(Boolean.TRUE);
 		final RetryPolicy retryPolicy = mock(RetryPolicy.class);
 		doThrow(VolleyError.class).when(retryPolicy).retry(any(VolleyError.class));
 		when(request.getRetryPolicy()).thenReturn(retryPolicy);
