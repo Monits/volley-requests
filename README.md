@@ -31,6 +31,8 @@ dependencies {
 For `SNAPSHOT` versions you can use the repository url
 `http://nexus.monits.com/content/repositories/oss-snapshots`
 
+The latest current snapshot version is `1.1.0-SNAPSHOT`
+
 ## Using Eclipse ADT
 
 This is an Android library project, just like Volley.
