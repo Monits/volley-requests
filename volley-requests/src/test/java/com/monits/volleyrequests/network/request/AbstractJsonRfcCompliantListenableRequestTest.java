@@ -2,12 +2,12 @@ package com.monits.volleyrequests.network.request;
 
 import com.android.volley.AuthFailureError;
 
-import org.hamcrest.Matchers;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -24,11 +24,11 @@ public abstract class AbstractJsonRfcCompliantListenableRequestTest<S, T extends
 		justification = "False positive")
 	@Test
 	public void testAddHeader() throws AuthFailureError {
-		assumeThat(request.getHeaders(), not(Matchers.<String, String>hasKey(CUSTOM_HEADER)));
+		assumeThat(request.getHeaders(), not(hasKey(CUSTOM_HEADER)));
 
 		request.addHeader(CUSTOM_HEADER, CUSTOM_HEADER_VALUE);
 
-		assertThat(request.getHeaders(), Matchers.<String, String>hasKey(CUSTOM_HEADER));
+		assertThat(request.getHeaders(), hasKey(CUSTOM_HEADER));
 	}
 
 	@Test

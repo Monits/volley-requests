@@ -58,9 +58,9 @@ dependencies {
     findbugsPlugins 'com.mebigfatguy.fb-contrib:fb-contrib:6.0.0'
     // Robolectric
     testCompile 'junit:junit:4.12'
-    testCompile 'org.hamcrest:hamcrest-core:1.1'
-    testCompile 'org.hamcrest:hamcrest-library:1.1'
-    testCompile 'org.hamcrest:hamcrest-integration:1.1'
+    testCompile 'org.hamcrest:hamcrest-core:1.3'
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
+    testCompile 'org.hamcrest:hamcrest-integration:1.3'
     testCompile 'org.mockito:mockito-core:1.9.5'
     testCompile('org.robolectric:robolectric:2.4') {
         exclude module: 'classworlds'
