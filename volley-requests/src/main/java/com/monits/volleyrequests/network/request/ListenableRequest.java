@@ -38,7 +38,7 @@ public abstract class ListenableRequest<T> extends Request<T> {
 	 * @param errListener The listener for errors.
 	 */
 	public ListenableRequest(final int method, @NonNull final String url,
-					@NonNull final Listener<T> listener,
+					@Nullable final Listener<T> listener,
 					@Nullable final ErrorListener errListener) {
 		super(method, url, errListener);
 		
@@ -47,6 +47,8 @@ public abstract class ListenableRequest<T> extends Request<T> {
 
 	@Override
 	protected void deliverResponse(final T ret) {
-		listener.onResponse(ret);
+		if (listener != null) {
+			listener.onResponse(ret);
+		}
 	}
 }

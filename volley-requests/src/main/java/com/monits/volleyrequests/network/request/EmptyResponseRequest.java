@@ -39,7 +39,7 @@ public class EmptyResponseRequest extends JsonRfcCompliantListenableRequest<Void
 	 * @param jsonBody The contents of the json to be sent in the request's body.
 	 */
 	public EmptyResponseRequest(final int method, @NonNull final String url,
-					@NonNull final Listener<Void> listener,
+					@Nullable final Listener<Void> listener,
 					@Nullable final ErrorListener errListener,
 					@Nullable final String jsonBody) {
 		super(method, url, listener, errListener, jsonBody);

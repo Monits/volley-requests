@@ -46,7 +46,7 @@ public abstract class JsonRfcCompliantListenableRequest<T> extends
 	 * @param jsonBody The contents of the json to be sent in the request's body.
 	 */
 	public JsonRfcCompliantListenableRequest(final int method, @NonNull final String url,
-					@NonNull final Listener<T> listener, @Nullable final ErrorListener errListener,
+					@Nullable final Listener<T> listener, @Nullable final ErrorListener errListener,
 					@Nullable final String jsonBody) {
 		super(method, url, listener, errListener);
 		

@@ -68,7 +68,7 @@ public class UploadBitmapRfcCompliantListenableRequest extends
 	 */
 	@SuppressWarnings("checkstyle:magicnumber")
 	public UploadBitmapRfcCompliantListenableRequest(final int method, @NonNull final String url,
-					@NonNull final Listener<String> listener,
+					@Nullable final Listener<String> listener,
 					@Nullable final ErrorListener errListener,
 					@NonNull final Bitmap bmp, @NonNull final String filename) {
 		super(method, url, listener, errListener);

@@ -109,7 +109,7 @@ public class RestResource<T> {
 	 * @return The request object for the given resource
 	 */
 	protected <K> Request<K> createRequest(final int method, @NonNull final String url,
-					@NonNull final Type type, @NonNull final Listener<K> listener,
+					@NonNull final Type type, @Nullable final Listener<K> listener,
 					@Nullable final ErrorListener errListener, @Nullable final T object) {
 		final String jsonBody  = object == null ? null : gson.toJson(object);
 		return new GsonRequest<>(method, url, this.gson,
@@ -134,7 +134,7 @@ public class RestResource<T> {
 	 */
 	public Request<T> getObject(@Nullable final Map<String, String> resourceParams,
 					@Nullable final Map<String, String> queryParams,
-					@NonNull final Listener<T> listener,
+					@Nullable final Listener<T> listener,
 					@Nullable final ErrorListener errListener) {
 		final String url = generateFullUrl(resourceParams, queryParams);
 		final Request<T> request = createRequest(Method.GET, this.hostAndPort + url, this.clazz,
@@ -158,7 +158,7 @@ public class RestResource<T> {
 	 * @return The GsonRequest with the created request
 	 */
 	public Request<T> getObject(@NonNull final Map<String, String> resourceParams,
-					@NonNull final Listener<T> listener, @Nullable final ErrorListener errListener) {
+					@Nullable final Listener<T> listener, @Nullable final ErrorListener errListener) {
 		return getObject(resourceParams, null, listener, errListener);
 	}
 
@@ -186,7 +186,7 @@ public class RestResource<T> {
 	 */
 	public Request<List<T>> getAll(@Nullable final Map<String, String> resourceParams,
 					@Nullable final Map<String, String> queryParams,
-					@NonNull final Listener<List<T>> listener, @Nullable final ErrorListener errListener) {
+					@Nullable final Listener<List<T>> listener, @Nullable final ErrorListener errListener) {
 		final String url = generateFullUrl(resourceParams, queryParams);
 
 		final Request<List<T>> request = createRequest(Method.GET, this.hostAndPort + url,
@@ -218,7 +218,7 @@ public class RestResource<T> {
 	 * @return The JSONArrayGsonRequest with the created request
 	 */
 	public Request<List<T>> getAll(@Nullable final Map<String, String> resourceParams,
-					@NonNull final Listener<List<T>> listener, @Nullable final ErrorListener errListener) {
+					@Nullable final Listener<List<T>> listener, @Nullable final ErrorListener errListener) {
 		return getAll(resourceParams, null, listener, errListener);
 	}
 
@@ -245,7 +245,7 @@ public class RestResource<T> {
 	 */
 	public Request<T> saveObject(@SaveMethod final int method,
 					@Nullable final Map<String, String> resourceParams,
-					@NonNull final Listener<T> listener, @Nullable final ErrorListener errListener,
+					@Nullable final Listener<T> listener, @Nullable final ErrorListener errListener,
 					@NonNull final T object) {
 		return saveObject(method, resourceParams, null, listener, errListener,
 			object);
@@ -276,7 +276,7 @@ public class RestResource<T> {
 	public Request<T> saveObject(@SaveMethod final int method,
 					@Nullable final Map<String, String> resourceParams,
 					@Nullable final Map<String, String> queryParams,
-					@NonNull final Listener<T> listener,
+					@Nullable final Listener<T> listener,
 					@Nullable final ErrorListener errListener, @NonNull final T object) {
 		if (method != Method.POST && method != Method.PUT) {
 			throw new IllegalArgumentException(
@@ -300,7 +300,7 @@ public class RestResource<T> {
 	 *            The listener for errors.
 	 * @return The GsonRequest with the created request
 	 */
-	public Request<T> deleteObject(@NonNull final Listener<T> listener,
+	public Request<T> deleteObject(@Nullable final Listener<T> listener,
 					@Nullable final ErrorListener errListener) {
 		return deleteObject(null, listener, errListener);
 	}
@@ -320,7 +320,7 @@ public class RestResource<T> {
 	 * @return The GsonRequest with the created request
 	 */
 	public Request<T> deleteObject(@Nullable final Map<String, String> resourceParams,
-					@NonNull final Listener<T> listener, @Nullable final ErrorListener errListener) {
+					@Nullable final Listener<T> listener, @Nullable final ErrorListener errListener) {
 		final String url = generateFullUrl(resourceParams, null);
 		final Request<T> request = createRequest(Method.DELETE, this.hostAndPort + url, this.clazz,
 						listener, errListener, null);

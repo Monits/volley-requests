@@ -35,7 +35,7 @@ public class GsonRequest<T> extends JsonRfcCompliantListenableRequest<T> {
 	private final Type clazz;
 
 	public GsonRequest(final int method, @NonNull final String url, @NonNull final Gson gson,
-					@NonNull final Type clazz, @NonNull final Listener<T> listener,
+					@NonNull final Type clazz, @Nullable final Listener<T> listener,
 					@Nullable final ErrorListener errListener, @Nullable final String jsonBody) {
 		super(method, url, listener, errListener, jsonBody);
 
