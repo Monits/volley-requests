@@ -48,7 +48,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.google.guava:guava:18.0'
     provided 'com.google.code.findbugs:annotations:3.0.0'
-    checkstyle 'com.puppycrawl.tools:checkstyle:6.2'
+    checkstyle 'com.puppycrawl.tools:checkstyle:6.4.1'
     findbugs 'com.google.code.findbugs:findbugs:3.0.0'
     findbugs configurations.findbugsPlugins.dependencies
     // To keep everything tidy, we set these apart
