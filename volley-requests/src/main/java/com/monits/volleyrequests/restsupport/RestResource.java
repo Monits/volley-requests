@@ -248,7 +248,7 @@ public class RestResource<T> {
 					@Nullable final Listener<T> listener, @Nullable final ErrorListener errListener,
 					@NonNull final T object) {
 		return saveObject(method, resourceParams, null, listener, errListener,
-			object);
+				object);
 	}
 
 	/**
@@ -417,4 +417,15 @@ public class RestResource<T> {
         // Entry point for extending classes
 	}
 
+	@Override
+	public String toString() {
+		return "RestResource{"
+				+ "gson=" + gson
+				+ ", resource='" + resource + '\''
+				+ ", clazz=" + clazz
+				+ ", hostAndPort='" + hostAndPort + '\''
+				+ ", elementsKey='" + elementsKey + '\''
+				+ ", listTypeToken=" + listTypeToken
+				+ '}';
+	}
 }

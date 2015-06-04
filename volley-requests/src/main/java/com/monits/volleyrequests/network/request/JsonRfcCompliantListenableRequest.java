@@ -81,4 +81,12 @@ public abstract class JsonRfcCompliantListenableRequest<T> extends
 	public byte[] getBody() throws AuthFailureError {
 		return json == null ? null : json.getBytes();
 	}
+
+	@Override
+	public String toString() {
+		return "JsonRfcCompliantListenableRequest{"
+				+ "headers=" + headers
+				+ ", json='" + json + '\''
+				+ "} " + super.toString();
+	}
 }

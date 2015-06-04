@@ -47,4 +47,11 @@ public class JSONArrayRequestDecorator<T> extends RequestDecorator<T> {
 	public String getElementsKey() {
 		return elementsKey;
 	}
+
+	@Override
+	public String toString() {
+		return "JSONArrayRequestDecorator{"
+				+ "elementsKey='" + elementsKey + '\''
+				+ "} " + super.toString();
+	}
 }

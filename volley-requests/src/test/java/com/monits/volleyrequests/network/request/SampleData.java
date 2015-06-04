@@ -8,6 +8,13 @@ public class SampleData {
 	}
 
 	@Override
+	public String toString() {
+		return "SampleData{"
+				+ "data='" + data + '\''
+				+ '}';
+	}
+
+	@Override
 	public boolean equals(final Object o) {
 		if (this == o) {
 			return true;
