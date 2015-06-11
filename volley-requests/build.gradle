@@ -55,7 +55,7 @@ dependencies {
     findbugsPlugins('com.monits:findbugs-plugin:0.2.0-SNAPSHOT') {
         transitive = false
     }
-    findbugsPlugins 'com.mebigfatguy.fb-contrib:fb-contrib:6.2.0'
+    findbugsPlugins 'com.mebigfatguy.fb-contrib:fb-contrib:6.2.1'
     // Robolectric
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-core:1.3'
