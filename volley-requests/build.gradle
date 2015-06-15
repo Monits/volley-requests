@@ -129,7 +129,8 @@ task findbugs(type: FindBugs) {
     }
 
     pluginClasspath = project.configurations.findbugsPlugins
-    classpath = project.configurations.compile
+    // FIXME : exploded-aar may contain old versions of dependencies not currently in use...
+    classpath = project.configurations.compile + project.configurations.testCompile + fileTree(dir: "$project.buildDir/intermediates/exploded-aar/", include: '**/*.jar') + fileTree(dir: "$project.buildDir/intermediates/", include: 'mockable-android-*.jar')
 }
 
 // when using 'android-unit-test' we need to set it like this...
@@ -137,6 +138,14 @@ tasks.withType(FindBugs) {
     ignoreFailures = true
     excludeFilter = file("$rootProject.projectDir/config/findbugs/excludeFilter.xml")
     classes = files("$project.buildDir/intermediates/classes/")
+}
+
+/* 
+ * For best results, Findbugs needs ALL classes, including Android's SDK,
+ * but the task is created dynamically, so we need to set it afterEvaluate
+*/
+afterEvaluate {
+  project.tasks.withType(FindBugs).each { it.dependsOn tasks.findByName('mockableAndroidJar') }
 }
 
 pmd {
