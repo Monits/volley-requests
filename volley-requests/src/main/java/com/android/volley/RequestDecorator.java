@@ -161,4 +161,9 @@ public abstract class RequestDecorator<T> extends Request<T> {
 	protected void deliverResponse(final T response) {
 		wrapped.deliverResponse(response);
 	}
+
+	@Override
+	public Response.ErrorListener getErrorListener() {
+		return wrapped.getErrorListener();
+	}
 }

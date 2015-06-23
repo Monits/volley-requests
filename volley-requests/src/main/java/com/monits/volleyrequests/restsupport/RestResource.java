@@ -52,8 +52,9 @@ import com.monits.volleyrequests.network.request.GsonRequest;
  * Example of a resource with parameters: /user/:userId/card/:cardId. Example of
  * a resource without parameters: /user/123/card/4 or /user
  *
- *
+ * @deprecated Use {@link com.monits.volleyrequests.restsupport.Rest} instead.
  */
+@Deprecated
 public class RestResource<T> {
 	@Retention(RetentionPolicy.SOURCE)
 	@IntDef({ Method.POST, Method.PUT })

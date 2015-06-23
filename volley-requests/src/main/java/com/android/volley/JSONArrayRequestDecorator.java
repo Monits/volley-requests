@@ -2,13 +2,13 @@ package com.android.volley;
 
 import android.support.annotation.NonNull;
 
-import java.io.UnsupportedEncodingException;
+import com.android.volley.toolbox.HttpHeaderParser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.android.volley.toolbox.HttpHeaderParser;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Class to parse a list of all items in a collection from a NetworkResponse
