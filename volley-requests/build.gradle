@@ -4,7 +4,7 @@ apply plugin: 'findbugs'
 apply plugin: 'pmd'
 apply plugin: 'checkstyle'
 
-version = "1.0.1"
+version = "1.0.2"
 group = "com.monits"
 
 if (version.endsWith('-SNAPSHOT')) {
