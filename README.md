@@ -106,33 +106,134 @@ since we would get a 302 to the login page instead of a 401 / 403.
 that. By being a decorator you can easily wrap this behaviour around any
 existing request, making it versatile and easy to apply across any application.
 
-### Rest support
+### Rest Api
 
-Create the corresponding <code>GsonRequest</code> for a particular resource. For any
-resource you can get the collection resource executing getAll(...) method and
-this will create the resource for you.
-Available request methods are, <code>Method.GET, Method.PUT, Method.POST</code> 
-and <code>Method.DELETE</code>
+RestApi is based on [Restangular] (https://github.com/mgonto/restangular) that consists
+in building a request by method chaining. For now it only works with <code>GsonRequest</code>,
+this means that your response must be in *json* format.
 
-#### How to use:
+#### How to use
 
-    String url = "http://www.example.com/user/:userId";
-    RestResource<User> mRestResource = new RestResource(uri, new Gson());
+On application startup you need to set the base url and the gson instance that you want
+to use throughout your app.
 
-If you want to get the user with id 12, add:
+    Rest.setBaseUrl("http://api.com:8080");
+    Rest.setGson(gson);
 
-    Map<String, String> resourceParams = new HashMap<String, String>();
-    resourceParams.put("userId", "12");
-    
-    GsonRequest<YouObjectType> mGsonRequest = mRestResource
-        .getObject(resourceParams, listener, errListener);
+You can also optionally set an interceptor that can modify your request before it`s executed.
 
-Likewise, if you want to get all available users, add:
+    Rest.setInterceptor(new RequestInterceptor() {...}) //Set an interceptor
 
-    GsonRequest<List<YouObjectType>> mGsonRequest = mRestResource
-        .getAll(resourceParams, listener, errListener);
+Now you are ready to create requests for your resources. Here is an example.
 
-In this case, the generated url, by `RestResource<User>`, is "http://www.example.com/user/"
+Suppose that you have users in your resources.
+
+To get one user without an id (such as "yourself"), you need an url that looks something like this
+http://api.com:8080/me. So as you have previously set the base url, you must add
+the following:
+
+    Rest.one("me")
+        .get(User.class)
+        .onSuccess(successListener)
+        .onError(errorListener)
+        .onCancel(cancelListener)
+        .request();
+
+To get one user by id, you simply add the id to <code> one() </code> method:
+
+    Rest.one("user", id)
+        .get(User.class)
+        .onSuccess(successListener)
+        .onError(errorListener)
+        .onCancel(cancelListener)
+        .request();
+
+The url generated will be http://api.com:8080/user/id.
+
+If you need to get many users, your json response is
+a json array like:
+
+    [
+        {"firstName":"Jon", "lastName":"Snow"},
+        {"firstName":"Petyr", "lastName":"Baelish"},
+        {"firstName":"Ned","lastName":"Stark"}
+    ]
+
+If your response is an object that contains a json array like:
+
+    {
+        "response":
+          [
+                {"firstName":"Jon", "lastName":"Snow"},
+                {"firstName":"Petyr", "lastName":"Baelish"},
+                {"firstName":"Ned","lastName":"Stark"}
+          ]
+    }
+
+then you must set the elements key with the name of the object key.
+For this example you have to add:
+
+    Rest.setElementsKey("response");
+
+Now that you set the elements key you are ready to create the request.
+
+    Rest.all("users")
+        .get(User.class)
+        .onSuccess(successListener)
+        .onError(errorListener)
+        .onCancel(cancelListener)
+        .request();
+
+Methods POST, PATCH, PUT have the same syntax as GET, but DELETE, HEAD,
+TRACE and OPTIONS have no parameters. You can also use custom verbs with
+<code>method(int method, Class<U> clazz)</code>. If your response is empty, you
+can pass a <code>Void.class</code>zº as parameter.
+
+    Rest.one("user")
+        .post(Void.class)
+        ...
+
+If you want to add a query string to your request, add:
+
+    Rest.one("user")
+        .get(User.class)
+        .query("id", "1")
+        .query("timestamp", "1234")
+        ...
+        .request();
+
+or
+
+    final Map<String, String> map = ...
+
+    map.put("id", "1");
+    map.put("timestamp", "1234");
+
+    Rest.one("user")
+            .get(User.class)
+            .query(map);
+            ...
+            .request();
+
+If you want to add headers the syntax is the same as query string, but you
+have to call <code>headers(...)</code> instead of <code>query(...)</code>
+
+
+Here is a full example of a complex request:
+
+    Rest.setBaseUrl("http://api.com:8080");
+    Rest.setElementsKey("users");
+    Rest.one("user", "12")
+        .all("subjects")
+        .get(Subject.class)
+        .query("year", "2015")
+        .query("school", "ITBA")
+        .onSuccess(successListener)
+        .onError(errorListener)
+        .onCancel(cancelListener)
+        .request();
+
+The request url should look like this http://api.com:8080/user/12/subjects?year=2015&school=ITBA
 
 # Contributing
 We encourage you to contribute to this project!
