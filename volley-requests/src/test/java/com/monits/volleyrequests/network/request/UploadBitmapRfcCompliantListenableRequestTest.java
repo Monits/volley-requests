@@ -30,7 +30,7 @@ public class UploadBitmapRfcCompliantListenableRequestTest {
 	@Before
 	public void setUp() {
 		request = new UploadBitmapRfcCompliantListenableRequest(Request.Method.GET,
-				"http://www.google.com/", new DummyListener<String>(), null,
+				"http://www.google.com/", new DummyListener<String>(), null, null,
 				Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888), "filename");
 	}
 

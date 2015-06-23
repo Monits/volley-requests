@@ -25,9 +25,10 @@ public class GsonRequestTest
 
 	@Override
 	protected GsonRequest<SampleData> newRequest(final int method,
-				final Response.Listener<SampleData> listener) {
+				final Response.Listener<SampleData> listener,
+				final ListenableRequest.CancelListener cancelListener) {
 		return new GsonRequest<>(method, "http://www.google.com/", new Gson(), SampleData.class,
-				listener, null, null);
+				listener, null, cancelListener, null);
 	}
 
 	protected SampleData newValidResponse() {

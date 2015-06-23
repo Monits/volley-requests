@@ -34,13 +34,44 @@ public class GsonRequest<T> extends JsonRfcCompliantListenableRequest<T> {
 	private final Gson gson;
 	private final Type clazz;
 
+	/**
+	 * Creates a new GsonRequest instance
+	 *
+	 * @param method The request method, {@see Method}
+	 * @param url The url to be requested.
+	 * @param listener The listener for success.
+	 * @param errListener The listener for errors.
+	 * @param cancelListener The listener for errors.
+	 * @param jsonBody The contents of the json to be sent in the request's body.
+	 */
+
 	public GsonRequest(final int method, @NonNull final String url, @NonNull final Gson gson,
 					@NonNull final Type clazz, @Nullable final Listener<T> listener,
-					@Nullable final ErrorListener errListener, @Nullable final String jsonBody) {
-		super(method, url, listener, errListener, jsonBody);
+					@Nullable final ErrorListener errListener,
+					@Nullable final CancelListener cancelListener,
+					@Nullable final String jsonBody) {
 
+		super(method, url, listener, errListener, cancelListener, jsonBody);
 		this.gson = gson;
 		this.clazz = clazz;
+	}
+
+	/**
+	 * Creates a new GsonRequest instance, with less parameters for
+	 * backwards compatibility.
+	 *
+	 * @param method The request method, {@see Method}
+	 * @param url The url to be requested.
+	 * @param listener The listener for success.
+	 * @param errListener The listener for errors.
+	 * @param jsonBody The contents of the json to be sent in the request's body.
+	 */
+
+	public GsonRequest(final int method, @NonNull final String url, @NonNull final Gson gson,
+					@NonNull final Type clazz, @Nullable final Listener<T> listener,
+					@Nullable final ErrorListener errListener,
+					@Nullable final String jsonBody) {
+		this(method, url, gson, clazz, listener, errListener, null, jsonBody);
 	}
 
 	@SuppressWarnings("unchecked")

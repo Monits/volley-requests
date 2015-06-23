@@ -15,8 +15,10 @@ public class EmptyResponseRequestTest
 
 	@Override
 	protected EmptyResponseRequest newRequest(final int method,
-				final Response.Listener<Void> listener) {
-		return new EmptyResponseRequest(method, "http://www.google.com/", listener, null, null);
+				final Response.Listener<Void> listener,
+				final ListenableRequest.CancelListener cancelListener) {
+		return new EmptyResponseRequest(method, "http://www.google.com/", listener, null,
+				cancelListener, null);
 	}
 
 	protected Void newValidResponse() {

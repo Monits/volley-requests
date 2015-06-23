@@ -30,8 +30,27 @@ import com.android.volley.toolbox.HttpHeaderParser;
 public class EmptyResponseRequest extends JsonRfcCompliantListenableRequest<Void> {
 
 	/**
-	 * Creates a new EmptyResponseRequest instance
-	 * 
+	 * Creates a new EmptyResponseRequest instance.
+	 *
+	 * @param method The request method, {@see Method}
+	 * @param url The url to be requested.
+	 * @param listener The listener for success.
+	 * @param errListener The listener for errors.
+	 * @param cancelListener The listener for cancel.
+	 * @param jsonBody The contents of the json to be sent in the request's body.
+	 */
+	public EmptyResponseRequest(final int method, @NonNull final String url,
+						@Nullable final Listener<Void> listener,
+						@Nullable final ErrorListener errListener,
+						@Nullable final CancelListener cancelListener,
+						@Nullable final String jsonBody) {
+		super(method, url, listener, errListener, cancelListener, jsonBody);
+	}
+
+	/**
+	 * Creates a new EmptyResponseRequest instance with less parameters
+	 * for backwards compatibility.
+	 *
 	 * @param method The request method, {@see Method}
 	 * @param url The url to be requested.
 	 * @param listener The listener for success.
@@ -42,7 +61,7 @@ public class EmptyResponseRequest extends JsonRfcCompliantListenableRequest<Void
 					@Nullable final Listener<Void> listener,
 					@Nullable final ErrorListener errListener,
 					@Nullable final String jsonBody) {
-		super(method, url, listener, errListener, jsonBody);
+		this(method, url, listener, errListener, null, jsonBody);
 	}
 
 	@Override

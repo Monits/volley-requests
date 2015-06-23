@@ -43,15 +43,33 @@ public abstract class JsonRfcCompliantListenableRequest<T> extends
 	 * @param url The url to be requested.
 	 * @param listener The listener for success.
 	 * @param errListener The listener for errors.
+	 * @param cancelListener The listener for cancel.
+	 * @param jsonBody The contents of the json to be sent in the request's body.
+	 */
+	public JsonRfcCompliantListenableRequest(final int method, @NonNull final String url,
+					@Nullable final Listener<T> listener, @Nullable final ErrorListener errListener,
+					@Nullable final CancelListener cancelListener,
+					@Nullable final String jsonBody) {
+		super(method, url, listener, errListener, cancelListener);
+		
+		this.json = jsonBody;
+		headers = new HashMap<String, String>();
+	}
+
+	/**
+	 * Creates a new RfcCompliantListenableRequest instance with fewer
+	 * parameters for backwards compatibility
+	 *
+	 * @param method The request method, {@see Method}
+	 * @param url The url to be requested.
+	 * @param listener The listener for success.
+	 * @param errListener The listener for errors.
 	 * @param jsonBody The contents of the json to be sent in the request's body.
 	 */
 	public JsonRfcCompliantListenableRequest(final int method, @NonNull final String url,
 					@Nullable final Listener<T> listener, @Nullable final ErrorListener errListener,
 					@Nullable final String jsonBody) {
-		super(method, url, listener, errListener);
-		
-		this.json = jsonBody;
-		headers = new HashMap<String, String>();
+		this(method, url, listener, errListener, null, jsonBody);
 	}
 	
 	/**

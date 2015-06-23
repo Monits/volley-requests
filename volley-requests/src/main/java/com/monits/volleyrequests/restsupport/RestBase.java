@@ -21,6 +21,7 @@ import android.support.annotation.Nullable;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.google.gson.Gson;
+import com.monits.volleyrequests.network.request.ListenableRequest.CancelListener;
 import com.monits.volleyrequests.network.request.GsonRequest;
 
 import java.lang.reflect.InvocationTargetException;
@@ -40,6 +41,8 @@ public abstract class RestBase<T, S> implements UrlBuilder, RequestBuilder<T, S>
 	protected T obj;
 	private Response.Listener<S> listener;
 	private Response.ErrorListener errorListener;
+	private CancelListener cancelListener;
+
 
 	/*package*/ RestBase(final String url, final Gson gson, final Class<T> type) {
 		this.url = url;
@@ -229,10 +232,17 @@ public abstract class RestBase<T, S> implements UrlBuilder, RequestBuilder<T, S>
 
 	@NonNull
 	@Override
+	public RequestBuilder<T, S> onCancel(final CancelListener listener) {
+		this.cancelListener = listener;
+		return this;
+	}
+
+	@NonNull
+	@Override
 	public Request<S> request() {
 		final String jsonBody = obj == null ? null : gson.toJson(obj);
 		final GsonRequest<S> request = new GsonRequest<>(method, getRequestUrl(), this.gson,
-				getDecodeType(type), listener, errorListener, jsonBody);
+				getDecodeType(type), listener, errorListener, cancelListener, jsonBody);
 
 		// Add headers
 		for (final Map.Entry<String, String> entry : headers.entrySet()) {

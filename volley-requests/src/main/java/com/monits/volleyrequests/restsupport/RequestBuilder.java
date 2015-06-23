@@ -20,6 +20,7 @@ import android.support.annotation.Nullable;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.monits.volleyrequests.network.request.ListenableRequest.CancelListener;
 
 import java.util.Map;
 
@@ -93,6 +94,18 @@ public interface RequestBuilder<T, S> {
 	 */
 	@NonNull
 	RequestBuilder<T, S> onError(@Nullable Response.ErrorListener listener);
+
+	/**
+	 * Sets a cancel listener for the request.
+	 *
+	 * There can be only one. Calling this method more than once overwrites the value.
+	 * Passing null simply deletes any already set listener.
+	 *
+	 * @param listener The listener to be used.
+	 * @return The RequestBuilder, for a fluid programming interface.
+	 */
+	@NonNull
+	RequestBuilder<T, S> onCancel(@Nullable CancelListener listener);
 
 	/**
 	 * Retrieves the url to be requested. This includes not only the path, but also query parameters

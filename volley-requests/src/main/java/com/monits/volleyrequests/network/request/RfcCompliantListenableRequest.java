@@ -63,11 +63,13 @@ public abstract class RfcCompliantListenableRequest<T> extends ListenableRequest
 	 * @param url The url to be requested.
 	 * @param listener The listener for success.
 	 * @param errListener The listener for errors.
+	 * @param cancelListener The listener for cancel.
 	 */
 	public RfcCompliantListenableRequest(final int method, @NonNull final String url,
 					@Nullable final Listener<T> listener,
-					@Nullable final ErrorListener errListener) {
-		super(method, url, listener, errListener);
+					@Nullable final ErrorListener errListener,
+					@Nullable final CancelListener cancelListener) {
+		super(method, url, listener, errListener, cancelListener);
 
 		if (method == Method.DEPRECATED_GET_OR_POST) {
 			throw new IllegalArgumentException(
@@ -76,6 +78,21 @@ public abstract class RfcCompliantListenableRequest<T> extends ListenableRequest
 		
 		// Should we really hit the server?
 		setShouldCache(method == Method.GET || method == Method.HEAD);
+	}
+
+	/**
+	 * Creates a new RfcCompliantListenableRequest instance with
+	 * fewer parameters for backwards compatibility.
+	 *
+	 * @param method The request method, {@see Method}
+	 * @param url The url to be requested.
+	 * @param listener The listener for success.
+	 * @param errListener The listener for errors.
+	 */
+	public RfcCompliantListenableRequest(final int method, @NonNull final String url,
+						@Nullable final Listener<T> listener,
+						@Nullable final ErrorListener errListener) {
+		this(method, url, listener, errListener, null);
 	}
 
 	@Override
