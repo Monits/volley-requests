@@ -59,11 +59,13 @@ public abstract class RequestDecorator<T> extends Request<T> {
 
 	@Override
 	public void addMarker(final String tag) {
+		super.addMarker(tag);
 		wrapped.addMarker(tag);
 	}
 
 	@Override
 	public Request<?> setRequestQueue(final RequestQueue requestQueue) {
+		super.setRequestQueue(requestQueue);
 		return wrapped.setRequestQueue(requestQueue);
 	}
 
