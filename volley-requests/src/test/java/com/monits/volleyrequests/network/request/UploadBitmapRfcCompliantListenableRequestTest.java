@@ -1,7 +1,9 @@
 package com.monits.volleyrequests.network.request;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -12,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
+import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +22,10 @@ import java.util.Map;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 @RunWith(RobolectricTestRunner.class)
 public class UploadBitmapRfcCompliantListenableRequestTest {
@@ -60,6 +67,28 @@ public class UploadBitmapRfcCompliantListenableRequestTest {
 
 		final Response<String> response = request.parseNetworkResponse(networkResponse);
 		assertEquals(RESPONSE, response.result);
+	}
+
+	@Test
+	public void testGetBody() throws AuthFailureError {
+		final Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+		request = new UploadBitmapRfcCompliantListenableRequest(Request.Method.GET,
+				"http://www.google.com/", new DummyListener<String>(), null,
+				bitmap, "filename");
+		final byte[] body = request.getBody();
+		final ByteArrayInputStream bais = new ByteArrayInputStream(body);
+		final Bitmap decodedBitmap = BitmapFactory.decodeStream(bais);
+		assertEquals(bitmap.getWidth(), decodedBitmap.getWidth());
+		assertEquals(bitmap.getHeight(), decodedBitmap.getHeight());
+	}
+
+	@Test
+	public void testToString() {
+		final String defaultToString = request.getClass().getName()
+				+ '@' + Integer.toHexString(request.hashCode());
+
+		assertThat(request.toString(), not(equalTo(defaultToString)));
+		assertNotNull(request.toString());
 	}
 
 	// Dummy empty implementation of listener class.

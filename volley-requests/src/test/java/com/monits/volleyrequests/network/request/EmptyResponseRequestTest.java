@@ -14,6 +14,12 @@ public class EmptyResponseRequestTest
 		extends AbstractJsonRfcCompliantListenableRequestTest<Void, EmptyResponseRequest> {
 
 	@Override
+	protected EmptyResponseRequest newRequest(final int method, final Response.Listener<Void> listener) {
+		return new EmptyResponseRequest(method, "http://www.google.com/", listener, null,
+				null);
+	}
+
+	@Override
 	protected EmptyResponseRequest newRequest(final int method,
 				final Response.Listener<Void> listener,
 				final ListenableRequest.CancelListener cancelListener) {

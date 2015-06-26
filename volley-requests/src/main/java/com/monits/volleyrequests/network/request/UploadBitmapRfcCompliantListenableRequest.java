@@ -15,10 +15,6 @@
 */
 package com.monits.volleyrequests.network.request;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.support.annotation.NonNull;
@@ -33,6 +29,10 @@ import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.toolbox.HttpHeaderParser;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -136,5 +136,13 @@ public class UploadBitmapRfcCompliantListenableRequest extends
 		}
 		
 		return bos.toByteArray();
+	}
+
+	@Override
+	public String toString() {
+		return "UploadBitmapRfcCompliantListenableRequest{ "
+				+ "bitmap=" + bitmap
+				+ ", filename='" + filename + '\''
+				+ " }";
 	}
 }

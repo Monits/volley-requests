@@ -8,6 +8,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @Ignore("Abstract test class for abstract class, don't run stand alone")
@@ -24,6 +25,8 @@ public abstract class AbstractListenableRequestTest<S, T extends ListenableReque
 		return newRequest(method, new DummyListener<S>(), new DummyCancelListener());
 	}
 
+	protected abstract T newRequest(final int method, final Response.Listener<S> listener);
+
 	protected abstract T newRequest(final int method, final Response.Listener<S> listener,
 						final ListenableRequest.CancelListener cancelListener);
 
@@ -34,7 +37,7 @@ public abstract class AbstractListenableRequestTest<S, T extends ListenableReque
 		@SuppressWarnings("unchecked")
 		final Response.Listener<S> listener = mock(Response.Listener.class);
 
-		final T r = newRequest(Request.Method.GET, listener, null);
+		final T r = newRequest(Request.Method.GET, listener);
 		final S response = newValidResponse();
 		r.deliverResponse(response);
 
@@ -50,6 +53,17 @@ public abstract class AbstractListenableRequestTest<S, T extends ListenableReque
 		r.cancel();
 
 		verify(cancelListener).onCancel();
+	}
+
+	@Test
+	public void testOnCancelNeverCall() throws Exception {
+		@SuppressWarnings("unchecked")
+		final ListenableRequest.CancelListener cancelListener = mock(ListenableRequest.CancelListener.class);
+
+		final T r = newRequest(Request.Method.GET, null);
+		r.cancel();
+
+		verify(cancelListener, never()).onCancel();
 	}
 
 	// Dummy empty implementation of listener class.

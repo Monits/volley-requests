@@ -7,9 +7,11 @@ import org.junit.Test;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
 
@@ -34,5 +36,14 @@ public abstract class AbstractJsonRfcCompliantListenableRequestTest<S, T extends
 	@Test
 	public void testBodyContentType() {
 		assertEquals("application/json", request.getBodyContentType());
+	}
+
+	@Test
+	public void testToString() {
+		final String defaultToString = request.getClass().getName()
+				+ '@' + Integer.toHexString(request.hashCode());
+
+		assertThat(request.toString(), not(equalTo(defaultToString)));
+		assertNotNull(request.toString());
 	}
 }
