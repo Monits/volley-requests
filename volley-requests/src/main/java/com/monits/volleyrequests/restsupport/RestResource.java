@@ -20,6 +20,18 @@ import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.android.volley.JSONArrayRequestDecorator;
+import com.android.volley.MaybeRequestDecorator;
+import com.android.volley.Request;
+import com.android.volley.Request.Method;
+import com.android.volley.Response.ErrorListener;
+import com.android.volley.Response.Listener;
+import com.google.common.reflect.TypeParameter;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.monits.volleyrequests.network.request.GsonRequest;
+import com.monits.volleyrequests.network.request.ListenableRequest.CancelListener;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Type;
@@ -31,18 +43,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.android.volley.JSONArrayRequestDecorator;
-import com.android.volley.MaybeRequestDecorator;
-import com.android.volley.Request;
-import com.android.volley.Request.Method;
-import com.android.volley.Response.ErrorListener;
-import com.android.volley.Response.Listener;
-import com.google.common.reflect.TypeParameter;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import com.monits.volleyrequests.network.request.ListenableRequest.CancelListener;
-import com.monits.volleyrequests.network.request.GsonRequest;
 
 /**
  *
@@ -79,6 +79,8 @@ public class RestResource<T> {
 	 *            The resourcer that you want to access
 	 * @param clazz
 	 *            The type of the object that the json represents
+	 * @param gson The gson instance that you want to use in your requests
+	 *
 	 * @throws MalformedURLException If the given URL is not properly formed.
 	 */
 	public RestResource(@NonNull final String resource, @NonNull final Class<T> clazz,
@@ -295,19 +297,23 @@ public class RestResource<T> {
 	 *            The listener for errors.
 	 * @param cancelListener
 	 *            The listener for cancel.
-	 * @return The JSONArrayGsonRequest with the created request
+	 * @return If the {@link #elementsKey} is null returns {@link GsonRequest}
+	 * else returns the {@link JSONArrayRequestDecorator} with the created request
 	 */
 	public Request<List<T>> getAll(@Nullable final Map<String, String> resourceParams,
 					@Nullable final Map<String, String> queryParams,
 					@Nullable final Listener<List<T>> listener, @Nullable final ErrorListener errListener,
 					@Nullable final CancelListener cancelListener) {
 		final String url = generateFullUrl(resourceParams, queryParams);
-		final Request<List<T>> request = createRequest(Method.GET, this.hostAndPort + url,
+		final Request<List<T>> simpleRequest = createRequest(Method.GET, this.hostAndPort + url,
 						listTypeToken, listener, errListener, cancelListener, null);
-		final JSONArrayRequestDecorator<List<T>> jsonRequest = new JSONArrayRequestDecorator<>(
-				request, elementsKey);
-		configureRequest(jsonRequest);
-		return jsonRequest;
+		final Request<List<T>> request;
+		if (elementsKey == null) {
+			request = simpleRequest;
+		} else {
+			request = new JSONArrayRequestDecorator<>(simpleRequest, elementsKey);
+		}
+		return request;
 	}
 
 	/**

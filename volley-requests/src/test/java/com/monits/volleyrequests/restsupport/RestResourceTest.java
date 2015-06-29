@@ -1,8 +1,10 @@
 package com.monits.volleyrequests.restsupport;
 
+import com.android.volley.JSONArrayRequestDecorator;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.google.gson.Gson;
+import com.monits.volleyrequests.network.request.GsonRequest;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +17,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 @SuppressWarnings("checkstyle:multiplestringliterals")
 @RunWith(RobolectricTestRunner.class)
@@ -176,5 +183,26 @@ public class RestResourceTest {
 		public void onResponse(final T objects) {
 			// Dummy method does nothing
 		}
+	}
+
+	@Test
+	public void testGellAllElementsKey() {
+		final Request<List<Object>> jsonArrayRequest
+				= restResource.getAll(null, new DummyListener<List<Object>>(), null, null);
+		assertThat(jsonArrayRequest, instanceOf(JSONArrayRequestDecorator.class));
+		restResource.setElementsKey(null);
+		final Request<List<Object>> request
+				= restResource.getAll(null, new DummyListener<List<Object>>(), null, null);
+		assertThat(request, instanceOf(GsonRequest.class));
+	}
+
+	@Test
+	public void testToString() {
+
+		final String defaultToString = restResource.getClass().getName()
+				+ '@' + Integer.toHexString(restResource.hashCode());
+
+		assertThat(restResource.toString(), not(equalTo(defaultToString)));
+		assertNotNull(restResource.toString());
 	}
 }
