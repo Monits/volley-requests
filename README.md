@@ -235,6 +235,55 @@ Here is a full example of a complex request:
 
 The request url should look like this http://api.com:8080/user/12/subjects?year=2015&school=ITBA
 
+### Request Loader
+<code>RequestLoader</code> is a subclass of [Android v4 Loader] (http://developer.android.com/reference/android/support/v4/content/Loader.html)
+that "binds" a <code>Request</code> to an Activity's lifecycle and refreshes data periodically,
+similar to [AsyncTaskLoader] (http://developer.android.com/reference/android/support/v4/content/AsyncTaskLoader.html).
+
+#### How to use
+If you are familiarized with Android's Loaders, you shouldn't have trouble with this one. Aside
+from some minor differences, its behaviour is basically the same. Here is what you need to know:
+
+You can stop worrying about canceling your <code>Request</code>, as the <code>LoaderManager</code> is
+attached to an Activity/Fragment's life cycle, <code>RequestLoader</code> automatically cancels any
+pending <code>Requests</code> when your Activity/Fragment is no longer active. This will also avoid
+potential problems, like unattached <code>Views</code> and null pointers.
+
+As mentioned before, it refreshes your data periodically with a delay between reloads set by an
+<code>updateThrottle</code> in milliseconds. Note that its default value is 0, meaning that you can
+still use <code>RequestLoader</code> even if you don't need constant data refreshing, as it will
+load only once.You can update its value whenever you want by calling <code>setUpdateThrottle(long delayMS)</code>.
+Here is a brief example:
+
+    /* MyClass is the data type that the loader will refresh */
+    public class MyActivity extends Activity implements LoaderManager.LoaderCallbacks<MyClass> {
+
+            private RequestQueue requestQueue;
+            private Request request;
+
+        	protected void onCreate(final Bundle savedInstanceState) {
+        	    /* Set your activity's fields */
+        	    getSupportLoaderManager().restartLoader(0, null, this);
+        	}
+
+        	public Loader<MyClass> onCreateLoader(int id, Bundle args) {
+            		RequestLoader<MyClass> loader = new RequestLoader<MyClass>(this, request, requestQueue);
+            		loader.setUpdateThrottle(10000l); //Set to refresh data every 10 seconds
+            		return loader;
+            }
+
+            public void onLoadFinished(Loader<MyClass> loader, Cause data) {
+            	/* What to do when loader finishes refreshing */
+            }
+
+            public void onLoaderReset(Loader<MyClass> loader) {
+                /* What to do when LoaderManager resets your Loader*/
+            }
+    }
+
+And that's it! Now you have a full functioning loader.
+
+
 # Contributing
 We encourage you to contribute to this project!
 
