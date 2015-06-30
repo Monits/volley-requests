@@ -24,7 +24,7 @@ And then you can add the library as dependency
 
 ```
 dependencies {
-    compile 'com.monits:volley-requests:1.0.1'
+    compile 'com.monits:volley-requests:1.0.2'
 }
 ```
 
