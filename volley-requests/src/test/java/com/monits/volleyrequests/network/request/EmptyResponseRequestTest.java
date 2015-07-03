@@ -2,10 +2,13 @@ package com.monits.volleyrequests.network.request;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.Response;
+import com.android.volley.AuthFailureError;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.robolectric.RobolectricTestRunner;
+
 
 import static junit.framework.Assert.assertNull;
 
@@ -29,6 +32,12 @@ public class EmptyResponseRequestTest
 
 	protected Void newValidResponse() {
 		return null;
+	}
+
+	@Test
+	public void testGetNullBody() throws AuthFailureError {
+		final byte[] body = request.getBody();
+		assertNull(body);
 	}
 
 	@Test

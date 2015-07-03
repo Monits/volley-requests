@@ -19,6 +19,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.JSONArrayRequestDecorator;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.monits.volleyrequests.network.request.ListenableRequest;
 import com.google.gson.Gson;
 import com.monits.volleyrequests.network.request.GsonRequest;
 
@@ -46,6 +47,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -106,8 +108,8 @@ public class RestTest {
 		headers.put(HEADER_NAME_2, HEADER_VALUE_2);
 
 		final Request<Void> request = Rest.all(RESOURCE_ROUTE_USERS).head()
-				.header(HEADER_NAME_1, HEADER_VALUE_1)	// Key-value method
-				.headers(headers)						// Map based metod
+				.header(HEADER_NAME_1, HEADER_VALUE_1) //Key-value method
+				.headers(headers) // Map based metod
 				.request();
 
 		final Map<String, String> actualHeaders = request.getHeaders();
@@ -176,8 +178,8 @@ public class RestTest {
 		queryParams.put(QUERY_PARAM_2, QUERY_VALUE_2);
 
 		final Request<List<Object>> request = Rest.all(RESOURCE_ROUTE_USERS).get(Object.class)
-				.query(QUERY_PARAM_1, QUERY_VALUE_1)	// Use key-value method
-				.query(queryParams)						// Use map method
+				.query(QUERY_PARAM_1, QUERY_VALUE_1) // Use key-value method
+				.query(queryParams) // Use map method
 				.request();
 
 		// Params may be in any order, so we check it's any of the plausible alternatives
@@ -304,7 +306,7 @@ public class RestTest {
 	@Test
 	public void testGetAllFromElement() {
 		final Request<List<Object>> request = Rest.one(RESOURCE_ROUTE_USERS, RESOURCE_VALUE_USER_ID)
-				.getList()		// Transverse REST tree up to collection level
+				.getList() // Transverse REST tree up to collection level
 				.get(Object.class).request();
 
 		assertEquals(GET_ALL_URL, request.getUrl());
@@ -381,5 +383,14 @@ public class RestTest {
 
 		assertThat(restElement.toString(), not(equalTo(defaultToString)));
 		assertNotNull(restElement.toString());
+	}
+
+	@Test
+	public void testOnCancel() {
+		final ListenableRequest.CancelListener cancelListener = mock(ListenableRequest.CancelListener.class);
+		final Request<Object> request = Rest.one(RESOURCE_ROUTE_USERS, RESOURCE_VALUE_USER_ID)
+				.put(Object.class).onSuccess(mock(Response.Listener.class)).onCancel(cancelListener).request();
+		request.cancel();
+		verify(cancelListener, only()).onCancel();
 	}
 }

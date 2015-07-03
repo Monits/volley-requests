@@ -8,6 +8,12 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -196,5 +202,14 @@ public abstract class AbstractRequestDecoratorTest<T extends RequestDecorator<Ob
 		final String tag = "tag";
 		decorator.setTag(tag);
 		verify(request).setTag(tag);
+	}
+
+	@Test
+	public void testToString() {
+		final String defaultToString = decorator.getClass().getName()
+				+ '@' + Integer.toHexString(decorator.hashCode());
+
+		assertThat(decorator.toString(), not(equalTo(defaultToString)));
+		assertNotNull(decorator.toString());
 	}
 }

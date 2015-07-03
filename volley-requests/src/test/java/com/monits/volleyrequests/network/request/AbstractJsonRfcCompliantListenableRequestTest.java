@@ -10,10 +10,13 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.not;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
+
+
 
 @Ignore("Abstract test class for abstract class, don't run stand alone")
 @SuppressWarnings("PMD.TooManyStaticImports")

@@ -10,23 +10,22 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.robolectric.RobolectricTestRunner;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.robolectric.Robolectric.runUiThreadTasksIncludingDelayedTasks;
+
 
 @RunWith(RobolectricTestRunner.class)
 public class RequestLoaderTest {
@@ -43,22 +42,12 @@ public class RequestLoaderTest {
 	}
 
 	@Test
-	public void testUpdateThrottle() {
-		loader.setUpdateThrottle(2L);
+	public void testUpdateThrottle() throws InterruptedException {
+		final int nRepeat = 2;
+		loader.setUpdateThrottle(5L);
 		loader.onForceLoad();
-		final CountDownLatch c = new CountDownLatch(2);
-		when(requestQueue.add(request)).thenAnswer(new Answer<Void>() {
-			@Override
-			public Void answer(final InvocationOnMock invocation) throws Throwable {
-				c.countDown();
-				return null;
-			}
-		});
-		try {
-			c.await(2, TimeUnit.MILLISECONDS);
-		} catch (final InterruptedException e) {
-		}
-
+		runUiThreadTasksIncludingDelayedTasks();
+		verify(requestQueue, atLeast(nRepeat)).add(any(Request.class));
 	}
 
 	@Test
@@ -105,6 +94,18 @@ public class RequestLoaderTest {
 	}
 
 	@Test
+	public void testOnReset() {
+		final ArgumentCaptor<Request> captor = ArgumentCaptor.forClass(Request.class);
+
+		loader.onForceLoad();
+		verify(requestQueue).add(captor.capture());
+		final Request request = captor.getValue();
+		loader.onReset();
+		loader.onForceLoad();
+		assertFalse(request.isCanceled());
+	}
+
+	@Test
 	public void testToString() {
 		final Request<String> request = mock(GsonRequest.class);
 		final RequestQueue requestQueue = mock(RequestQueue.class);
@@ -117,4 +118,5 @@ public class RequestLoaderTest {
 		assertThat(loader.toString(), not(equalTo(defaultToString)));
 		assertNotNull(loader.toString());
 	}
+
 }

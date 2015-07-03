@@ -35,10 +35,10 @@ public abstract class JsonRfcCompliantListenableRequest<T> extends
 
 	private final String json;
 	private final Map<String, String> headers;
-	
+
 	/**
 	 * Creates a new RfcCompliantListenableRequest instance
-	 * 
+	 *
 	 * @param method The request method, {@see Method}
 	 * @param url The url to be requested.
 	 * @param listener The listener for success.
@@ -51,7 +51,6 @@ public abstract class JsonRfcCompliantListenableRequest<T> extends
 					@Nullable final CancelListener cancelListener,
 					@Nullable final String jsonBody) {
 		super(method, url, listener, errListener, cancelListener);
-		
 		this.json = jsonBody;
 		headers = new HashMap<String, String>();
 	}
@@ -71,17 +70,17 @@ public abstract class JsonRfcCompliantListenableRequest<T> extends
 					@Nullable final String jsonBody) {
 		this(method, url, listener, errListener, null, jsonBody);
 	}
-	
+
 	/**
 	 * Manually add a header to this request.
-	 * 
+	 *
 	 * @param name The name of the header
 	 * @param value The value of the header.
 	 */
 	public void addHeader(final String name, final String value) {
 		headers.put(name, value);
 	}
-	
+
 	@Override
 	public Map<String, String> getHeaders() throws AuthFailureError {
 		return headers;

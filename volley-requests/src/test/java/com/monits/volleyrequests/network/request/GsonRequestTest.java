@@ -2,10 +2,13 @@ package com.monits.volleyrequests.network.request;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.Response;
+import com.android.volley.AuthFailureError;
+
 import com.google.gson.Gson;
 
 import org.apache.http.protocol.HTTP;
 import org.junit.Test;
+
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
@@ -15,6 +18,7 @@ import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.fail;
 
 @RunWith(RobolectricTestRunner.class)
@@ -34,7 +38,7 @@ public class GsonRequestTest
 				final Response.Listener<SampleData> listener,
 				final ListenableRequest.CancelListener cancelListener) {
 		return new GsonRequest<>(method, "http://www.google.com/", new Gson(), SampleData.class,
-				listener, null, cancelListener, null);
+				listener, null, cancelListener, "{}");
 	}
 
 	protected SampleData newValidResponse() {
@@ -80,9 +84,15 @@ public class GsonRequestTest
 	}
 
 	@Test
+	public void testGetNotNullBody() throws AuthFailureError {
+		final byte[] body = request.getBody();
+		assertNotNull(body);
+	}
+
+	@Test
 	public void testParseNetworkResponseWithBadJson() {
 		// This method is not delegated, but overridden by the decorator
-		final String json = "{data: null";	// Malformed json
+		final String json = "{data: null"; // Malformed json
 		final Map<String, String> headers = new HashMap<>();
 		headers.put(HTTP.CONTENT_TYPE, "application/javascript; charset=" + CHARSET);
 
