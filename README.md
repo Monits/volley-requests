@@ -24,14 +24,14 @@ And then you can add the library as dependency
 
 ```
 dependencies {
-    compile 'com.monits:volley-requests:1.0.2'
+    compile 'com.monits:volley-requests:1.1.0'
 }
 ```
 
 For `SNAPSHOT` versions you can use the repository url
 `http://nexus.monits.com/content/repositories/oss-snapshots`
 
-The latest current snapshot version is `1.1.0-SNAPSHOT`
+The latest current snapshot version is `1.2.0-SNAPSHOT`
 
 ## Using Eclipse ADT
 
