@@ -15,17 +15,12 @@
 */
 package com.android.volley;
 
-import java.util.Map;
-
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.android.volley.Cache.Entry;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Wrapper for the {@link Request} class, that on failure delegates to a policy to check
@@ -37,10 +32,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * By using the decorator pattern, this behavior can be added to any request regardless of it's type
  * and origin.
  */
-@SuppressWarnings("PMD.TooManyMethods")
-public final class RequeueAfterRequestDecorator<T> extends Request<T> {
+public final class RequeueAfterRequestDecorator<T> extends RequestDecorator<T> {
 
-	private final Request<T> wrapped;
 	private final RequeuePolicy requeuePolicy;
 
 	// Can't be final only because we can't instantiate it until the request get's added to a request queue
@@ -53,9 +46,7 @@ public final class RequeueAfterRequestDecorator<T> extends Request<T> {
 	 */
 	private RequeueAfterRequestDecorator(@NonNull final Request<T> request,
 					@NonNull final RequeuePolicy requeuePolicy) {
-		super(request.getMethod(), request.getUrl(), null);
-
-		wrapped = request;
+		super(request);
 
 		this.requeuePolicy = requeuePolicy;
 	}
@@ -71,19 +62,13 @@ public final class RequeueAfterRequestDecorator<T> extends Request<T> {
 	public static <T> RequeueAfterRequestDecorator<T> wrap(
 					@NonNull final Request<T> request, @NonNull final RequeuePolicy requeuePolicy) {
 
-		return new RequeueAfterRequestDecorator<T>(request, requeuePolicy);
+		return new RequeueAfterRequestDecorator<>(request, requeuePolicy);
 	}
 
 	@Override
-	protected void deliverResponse(final T arg0) {
-		if (arg0 != null) {
-			wrapped.deliverResponse(arg0);
-		}
-	}
-
-	@Override
-	protected Response<T> parseNetworkResponse(final NetworkResponse networkResponse) {
-		return wrapped.parseNetworkResponse(networkResponse);
+	public Request<?> setRequestQueue(final RequestQueue requestQueue) {
+		queue = requestQueue;
+		return super.setRequestQueue(requestQueue);
 	}
 
 	@Nullable
@@ -117,150 +102,6 @@ public final class RequeueAfterRequestDecorator<T> extends Request<T> {
 			return null;
 		}
 
-		return super.parseNetworkError(volleyError);
-	}
-
-	// Wrapper methods
-	@Override
-	public void addMarker(final String tag) {
-		wrapped.addMarker(tag);
-		super.addMarker(tag);
-	}
-
-	@Override
-	public void cancel() {
-		wrapped.cancel();
-		super.cancel();
-	}
-
-	@Override
-	public void deliverError(final VolleyError error) {
-		wrapped.deliverError(error);
-		super.deliverError(error);
-	}
-
-	@Override
-	public byte[] getBody() throws AuthFailureError {
-		return wrapped.getBody();
-	}
-
-	@Override
-	public String getBodyContentType() {
-		return wrapped.getBodyContentType();
-	}
-
-	@Override
-	public Entry getCacheEntry() {
-		return wrapped.getCacheEntry();
-	}
-
-	@Override
-	public String getCacheKey() {
-		return wrapped.getCacheKey();
-	}
-
-	@Override
-	public Map<String, String> getHeaders() throws AuthFailureError {
-		return wrapped.getHeaders();
-	}
-
-	@Override
-	public int getMethod() {
-		return wrapped.getMethod();
-	}
-
-	/**
-	 * @deprecated Use {@link #getBody()} instead.
-	 */
-	@Deprecated
-	@Override
-	public byte[] getPostBody() throws AuthFailureError {
-		return wrapped.getPostBody();
-	}
-
-	/**
-	 * @deprecated Use {@link #getBodyContentType()} instead.
-	 */
-	@Deprecated
-	@Override
-	public String getPostBodyContentType() {
-		return wrapped.getPostBodyContentType();
-	}
-
-	@Override
-	public com.android.volley.Request.Priority getPriority() {
-		return wrapped.getPriority();
-	}
-
-	@Override
-	public RetryPolicy getRetryPolicy() {
-		return wrapped.getRetryPolicy();
-	}
-
-	@Override
-	public Object getTag() {
-		return wrapped.getTag();
-	}
-
-	@Override
-	public int getTrafficStatsTag() {
-		return wrapped.getTrafficStatsTag();
-	}
-
-	@Override
-	public String getUrl() {
-		return wrapped.getUrl();
-	}
-
-	@Override
-	public boolean hasHadResponseDelivered() {
-		return wrapped.hasHadResponseDelivered();
-	}
-
-	@Override
-	public boolean isCanceled() {
-		return wrapped.isCanceled();
-	}
-
-	@Override
-	public void markDelivered() {
-		wrapped.markDelivered();
-		super.markDelivered();
-	}
-
-	@Override
-	public Request<?> setCacheEntry(final Entry entry) {
-		wrapped.setCacheEntry(entry);
-		return super.setCacheEntry(entry);
-	}
-
-	@Override
-	public Request<?> setRequestQueue(final RequestQueue requestQueue) {
-		this.queue = requestQueue;
-		
-		wrapped.setRequestQueue(requestQueue);
-		return super.setRequestQueue(requestQueue);
-	}
-
-	@SuppressFBWarnings(value = "UR_UNINIT_READ_CALLED_FROM_SUPER_CONSTRUCTOR",
-					justification = "The read is done to avoid a NPE, and is properly documented.")
-	@Override
-	public Request<?> setRetryPolicy(final RetryPolicy retryPolicy) {
-		/*
-		 * Request calls to setRetryPolicy on the constructor,
-		 * we don't want to override the retry policy set on the wrapped request
-		 * with the default one, so we ignore that on first call (and avoid a NPE).
-		 */
-		if (wrapped != null) {
-			wrapped.setRetryPolicy(retryPolicy);
-		}
-
-		return super.setRetryPolicy(retryPolicy);
-	}
-
-	@Override
-	public Request<?> setTag(final Object tag) {
-		wrapped.setTag(tag);
-		return super.setTag(tag);
+		return wrapped.parseNetworkError(volleyError);
 	}
 }

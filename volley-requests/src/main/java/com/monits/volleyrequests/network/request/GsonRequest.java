@@ -18,9 +18,6 @@ package com.monits.volleyrequests.network.request;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
-
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Response;
@@ -30,17 +27,51 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+
 public class GsonRequest<T> extends JsonRfcCompliantListenableRequest<T> {
 	private final Gson gson;
 	private final Type clazz;
 
-	public GsonRequest(final int method, @NonNull final String url, @NonNull final Gson gson,
-					@NonNull final Type clazz, @NonNull final Listener<T> listener,
-					@Nullable final ErrorListener errListener, @Nullable final String jsonBody) {
-		super(method, url, listener, errListener, jsonBody);
+	/**
+	 * Creates a new GsonRequest instance
+	 *
+	 * @param method The request method, {@see Method}
+	 * @param url The url to be requested.
+	 * @param listener The listener for success.
+	 * @param errListener The listener for errors.
+	 * @param cancelListener The listener for errors.
+	 * @param jsonBody The contents of the json to be sent in the request's body.
+	 */
 
+	public GsonRequest(final int method, @NonNull final String url, @NonNull final Gson gson,
+					@NonNull final Type clazz, @Nullable final Listener<T> listener,
+					@Nullable final ErrorListener errListener,
+					@Nullable final CancelListener cancelListener,
+					@Nullable final String jsonBody) {
+
+		super(method, url, listener, errListener, cancelListener, jsonBody);
 		this.gson = gson;
 		this.clazz = clazz;
+	}
+
+	/**
+	 * Creates a new GsonRequest instance, with less parameters for
+	 * backwards compatibility.
+	 *
+	 * @param method The request method, {@see Method}
+	 * @param url The url to be requested.
+	 * @param listener The listener for success.
+	 * @param errListener The listener for errors.
+	 * @param jsonBody The contents of the json to be sent in the request's body.
+	 */
+
+	public GsonRequest(final int method, @NonNull final String url, @NonNull final Gson gson,
+					@NonNull final Type clazz, @Nullable final Listener<T> listener,
+					@Nullable final ErrorListener errListener,
+					@Nullable final String jsonBody) {
+		this(method, url, gson, clazz, listener, errListener, null, jsonBody);
 	}
 
 	@SuppressWarnings("unchecked")

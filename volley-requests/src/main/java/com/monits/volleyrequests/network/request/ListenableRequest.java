@@ -23,30 +23,70 @@ import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 
 /**
- * A generic {@link Request} that adds a listener for success callback.
+ * A generic {@link Request} that adds a listener for success
+ * and cancel callbacks.
  */
 public abstract class ListenableRequest<T> extends Request<T> {
 
 	private final Listener<T> listener;
-	
+	private final CancelListener cancelListener;
+
 	/**
 	 * Creates a new ListenableRequest instance
-	 * 
+	 *
+	 * @param method The request method, {@see Method}
+	 * @param url The url to be requested.
+	 * @param listener The listener for success.
+	 * @param errListener The listener for errors.
+	 * @param cancelListener The listener for cancel.
+	 */
+	public ListenableRequest(final int method, @NonNull final String url,
+					@Nullable final Listener<T> listener,
+					@Nullable final ErrorListener errListener,
+					@Nullable final CancelListener cancelListener) {
+		super(method, url, errListener);
+		this.listener = listener;
+		this.cancelListener = cancelListener;
+
+	}
+
+	/**
+	 * Creates a new ListenableRequest instance, with fewer
+	 * parameters for backwards compatibility.
+	 *
 	 * @param method The request method, {@see Method}
 	 * @param url The url to be requested.
 	 * @param listener The listener for success.
 	 * @param errListener The listener for errors.
 	 */
 	public ListenableRequest(final int method, @NonNull final String url,
-					@NonNull final Listener<T> listener,
+					@Nullable final Listener<T> listener,
 					@Nullable final ErrorListener errListener) {
-		super(method, url, errListener);
-		
-		this.listener = listener;
+		this(method, url, listener, errListener, null);
 	}
 
 	@Override
 	protected void deliverResponse(final T ret) {
-		listener.onResponse(ret);
+		if (listener != null) {
+			listener.onResponse(ret);
+		}
+	}
+
+	@Override
+	public void cancel() {
+		super.cancel();
+		if (cancelListener != null) {
+			cancelListener.onCancel();
+		}
+	}
+
+	/**
+	 * Interface that defines the cancel listener for {@link ListenableRequest}
+	 */
+	public interface CancelListener {
+		/**
+		 *  Performs the desired action on a cancel callback
+		 */
+		void onCancel();
 	}
 }

@@ -35,10 +35,30 @@ public abstract class JsonRfcCompliantListenableRequest<T> extends
 
 	private final String json;
 	private final Map<String, String> headers;
-	
+
 	/**
 	 * Creates a new RfcCompliantListenableRequest instance
-	 * 
+	 *
+	 * @param method The request method, {@see Method}
+	 * @param url The url to be requested.
+	 * @param listener The listener for success.
+	 * @param errListener The listener for errors.
+	 * @param cancelListener The listener for cancel.
+	 * @param jsonBody The contents of the json to be sent in the request's body.
+	 */
+	public JsonRfcCompliantListenableRequest(final int method, @NonNull final String url,
+					@Nullable final Listener<T> listener, @Nullable final ErrorListener errListener,
+					@Nullable final CancelListener cancelListener,
+					@Nullable final String jsonBody) {
+		super(method, url, listener, errListener, cancelListener);
+		this.json = jsonBody;
+		headers = new HashMap<String, String>();
+	}
+
+	/**
+	 * Creates a new RfcCompliantListenableRequest instance with fewer
+	 * parameters for backwards compatibility
+	 *
 	 * @param method The request method, {@see Method}
 	 * @param url The url to be requested.
 	 * @param listener The listener for success.
@@ -46,24 +66,21 @@ public abstract class JsonRfcCompliantListenableRequest<T> extends
 	 * @param jsonBody The contents of the json to be sent in the request's body.
 	 */
 	public JsonRfcCompliantListenableRequest(final int method, @NonNull final String url,
-					@NonNull final Listener<T> listener, @Nullable final ErrorListener errListener,
+					@Nullable final Listener<T> listener, @Nullable final ErrorListener errListener,
 					@Nullable final String jsonBody) {
-		super(method, url, listener, errListener);
-		
-		this.json = jsonBody;
-		headers = new HashMap<String, String>();
+		this(method, url, listener, errListener, null, jsonBody);
 	}
-	
+
 	/**
 	 * Manually add a header to this request.
-	 * 
+	 *
 	 * @param name The name of the header
 	 * @param value The value of the header.
 	 */
 	public void addHeader(final String name, final String value) {
 		headers.put(name, value);
 	}
-	
+
 	@Override
 	public Map<String, String> getHeaders() throws AuthFailureError {
 		return headers;
@@ -80,5 +97,13 @@ public abstract class JsonRfcCompliantListenableRequest<T> extends
 	@Override
 	public byte[] getBody() throws AuthFailureError {
 		return json == null ? null : json.getBytes();
+	}
+
+	@Override
+	public String toString() {
+		return "JsonRfcCompliantListenableRequest{"
+				+ "headers=" + headers
+				+ ", json='" + json + '\''
+				+ "} " + super.toString();
 	}
 }

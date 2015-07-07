@@ -2,13 +2,13 @@ package com.android.volley;
 
 import android.support.annotation.NonNull;
 
-import java.io.UnsupportedEncodingException;
+import com.android.volley.toolbox.HttpHeaderParser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.android.volley.toolbox.HttpHeaderParser;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Class to parse a list of all items in a collection from a NetworkResponse
@@ -21,9 +21,8 @@ import com.android.volley.toolbox.HttpHeaderParser;
 public class JSONArrayRequestDecorator<T> extends RequestDecorator<T> {
 	private final String elementsKey;
 
-	public JSONArrayRequestDecorator(@NonNull final Request<T> request, final int method,
-					@NonNull final String url, @NonNull final String elementsKey) {
-		super(request, method, url);
+	public JSONArrayRequestDecorator(@NonNull final Request<T> request, @NonNull final String elementsKey) {
+		super(request);
 		this.elementsKey = elementsKey;
 	}
 
@@ -47,5 +46,12 @@ public class JSONArrayRequestDecorator<T> extends RequestDecorator<T> {
 	@NonNull
 	public String getElementsKey() {
 		return elementsKey;
+	}
+
+	@Override
+	public String toString() {
+		return "JSONArrayRequestDecorator{"
+				+ "elementsKey='" + elementsKey + '\''
+				+ "} " + super.toString();
 	}
 }

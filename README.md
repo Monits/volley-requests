@@ -3,7 +3,37 @@
 Volley Requests is a library project which contains several request
 implementations and utilities based on Android's Volley library.
 
+[![Build Status](https://travis-ci.org/Monits/volley-requests.svg?branch=master)](https://travis-ci.org/Monits/volley-requests)
+[![Coverage Status](https://coveralls.io/repos/Monits/volley-requests/badge.svg?branch=master)](https://coveralls.io/r/Monits/volley-requests?branch=master)
+
 # Usage
+
+## Using Gradle
+
+You can just add the dependency by adding our maven repositories
+
+```
+repositories {
+    maven {
+        url 'http://nexus.monits.com/content/repositories/oss-releases'
+    }
+}
+```
+
+And then you can add the library as dependency
+
+```
+dependencies {
+    compile 'com.monits:volley-requests:1.0.2'
+}
+```
+
+For `SNAPSHOT` versions you can use the repository url
+`http://nexus.monits.com/content/repositories/oss-snapshots`
+
+The latest current snapshot version is `1.1.0-SNAPSHOT`
+
+## Using Eclipse ADT
 
 This is an Android library project, just like Volley.
 
@@ -18,6 +48,7 @@ We love Volley and use it extensively. In doing so, we found several patterns
 and types of requests coming up over and over again.
 
 Among other things, we include:
+
 ### A family of requests that behave as expected out of the box
 
 Volley is extremely aggresive in it's caching strategies. If you are using a
@@ -75,33 +106,183 @@ since we would get a 302 to the login page instead of a 401 / 403.
 that. By being a decorator you can easily wrap this behaviour around any
 existing request, making it versatile and easy to apply across any application.
 
-### Rest support
+### Rest Api
 
-Create the corresponding <code>GsonRequest</code> for a particular resource. For any
-resource you can get the collection resource executing getAll(...) method and
-this will create the resource for you.
-Available request methods are, <code>Method.GET, Method.PUT, Method.POST</code> 
-and <code>Method.DELETE</code>
+RestApi is based on [Restangular] (https://github.com/mgonto/restangular) that consists
+in building a request by method chaining. For now it only works with <code>GsonRequest</code>,
+this means that your response must be in *json* format.
 
-#### How to use:
+#### How to use
 
-    String url = "http://www.example.com/user/:userId";
-    RestResource<User> mRestResource = new RestResource(uri, new Gson());
+On application startup you need to set the base url and the gson instance that you want
+to use throughout your app.
 
-If you want to get the user with id 12, add:
+    Rest.setBaseUrl("http://api.com:8080");
+    Rest.setGson(gson);
 
-    Map<String, String> resourceParams = new HashMap<String, String>();
-    resourceParams.put("userId", "12");
-    
-    GsonRequest<YouObjectType> mGsonRequest = mRestResource
-        .getObject(resourceParams, listener, errListener);
+You can also optionally set an interceptor that can modify your request before it`s executed.
 
-Likewise, if you want to get all available users, add:
+    Rest.setInterceptor(new RequestInterceptor() {...}) //Set an interceptor
 
-    GsonRequest<List<YouObjectType>> mGsonRequest = mRestResource
-        .getAll(resourceParams, listener, errListener);
+Now you are ready to create requests for your resources. Here is an example.
 
-In this case, the generated url, by `RestResource<User>`, is "http://www.example.com/user/"
+Suppose that you have users in your resources.
+
+To get one user without an id (such as "yourself"), you need an url that looks something like this
+http://api.com:8080/me. So as you have previously set the base url, you must add
+the following:
+
+    Rest.one("me")
+        .get(User.class)
+        .onSuccess(successListener)
+        .onError(errorListener)
+        .onCancel(cancelListener)
+        .request();
+
+To get one user by id, you simply add the id to <code> one() </code> method:
+
+    Rest.one("user", id)
+        .get(User.class)
+        .onSuccess(successListener)
+        .onError(errorListener)
+        .onCancel(cancelListener)
+        .request();
+
+The url generated will be http://api.com:8080/user/id.
+
+If you need to get many users, your json response is
+a json array like:
+
+    [
+        {"firstName":"Jon", "lastName":"Snow"},
+        {"firstName":"Petyr", "lastName":"Baelish"},
+        {"firstName":"Ned","lastName":"Stark"}
+    ]
+
+If your response is an object that contains a json array like:
+
+    {
+        "response":
+          [
+                {"firstName":"Jon", "lastName":"Snow"},
+                {"firstName":"Petyr", "lastName":"Baelish"},
+                {"firstName":"Ned","lastName":"Stark"}
+          ]
+    }
+
+then you must set the elements key with the name of the object key.
+For this example you have to add:
+
+    Rest.setElementsKey("response");
+
+Now that you set the elements key you are ready to create the request.
+
+    Rest.all("users")
+        .get(User.class)
+        .onSuccess(successListener)
+        .onError(errorListener)
+        .onCancel(cancelListener)
+        .request();
+
+Methods POST, PATCH, PUT have the same syntax as GET, but DELETE, HEAD,
+TRACE and OPTIONS have no parameters. You can also use custom verbs with
+<code>method(int method, Class<U> clazz)</code>. If your response is empty, you
+can pass a <code>Void.class</code>zº as parameter.
+
+    Rest.one("user")
+        .post(Void.class)
+        ...
+
+If you want to add a query string to your request, add:
+
+    Rest.one("user")
+        .get(User.class)
+        .query("id", "1")
+        .query("timestamp", "1234")
+        ...
+        .request();
+
+or
+
+    final Map<String, String> map = ...
+
+    map.put("id", "1");
+    map.put("timestamp", "1234");
+
+    Rest.one("user")
+            .get(User.class)
+            .query(map);
+            ...
+            .request();
+
+If you want to add headers the syntax is the same as query string, but you
+have to call <code>headers(...)</code> instead of <code>query(...)</code>
+
+
+Here is a full example of a complex request:
+
+    Rest.setBaseUrl("http://api.com:8080");
+    Rest.setElementsKey("users");
+    Rest.one("user", "12")
+        .all("subjects")
+        .get(Subject.class)
+        .query("year", "2015")
+        .query("school", "ITBA")
+        .onSuccess(successListener)
+        .onError(errorListener)
+        .onCancel(cancelListener)
+        .request();
+
+The request url should look like this http://api.com:8080/user/12/subjects?year=2015&school=ITBA
+
+### Request Loader
+<code>RequestLoader</code> is a subclass of [Android v4 Loader] (http://developer.android.com/reference/android/support/v4/content/Loader.html)
+that "binds" a <code>Request</code> to an Activity's lifecycle and refreshes data periodically,
+similar to [AsyncTaskLoader] (http://developer.android.com/reference/android/support/v4/content/AsyncTaskLoader.html).
+
+#### How to use
+If you are familiarized with Android's Loaders, you shouldn't have trouble with this one. Aside
+from some minor differences, its behaviour is basically the same. Here is what you need to know:
+
+You can stop worrying about canceling your <code>Request</code>, as the <code>LoaderManager</code> is
+attached to an Activity/Fragment's life cycle, <code>RequestLoader</code> automatically cancels any
+pending <code>Requests</code> when your Activity/Fragment is no longer active. This will also avoid
+potential problems, like unattached <code>Views</code> and null pointers.
+
+As mentioned before, it refreshes your data periodically with a delay between reloads set by an
+<code>updateThrottle</code> in milliseconds. Note that its default value is 0, meaning that you can
+still use <code>RequestLoader</code> even if you don't need constant data refreshing, as it will
+load only once.You can update its value whenever you want by calling <code>setUpdateThrottle(long delayMS)</code>.
+Here is a brief example:
+
+    /* MyClass is the data type that the loader will refresh */
+    public class MyActivity extends Activity implements LoaderManager.LoaderCallbacks<MyClass> {
+
+            private RequestQueue requestQueue;
+            private Request request;
+
+        	protected void onCreate(final Bundle savedInstanceState) {
+        	    /* Set your activity's fields */
+        	    getSupportLoaderManager().restartLoader(0, null, this);
+        	}
+
+        	public Loader<MyClass> onCreateLoader(int id, Bundle args) {
+            		RequestLoader<MyClass> loader = new RequestLoader<MyClass>(this, request, requestQueue);
+            		loader.setUpdateThrottle(10000l); //Set to refresh data every 10 seconds
+            		return loader;
+            }
+
+            public void onLoadFinished(Loader<MyClass> loader, Cause data) {
+            	/* What to do when loader finishes refreshing */
+            }
+
+            public void onLoaderReset(Loader<MyClass> loader) {
+                /* What to do when LoaderManager resets your Loader*/
+            }
+    }
+
+And that's it! Now you have a full functioning loader.
+
 
 # Contributing
 We encourage you to contribute to this project!
@@ -110,7 +291,7 @@ We are also looking forward to your bug reports, feature requests and questions
 regarding android-volley.
 	
 # Copyright and License
-Copyright 2010-2014 Monits.
+Copyright 2010-2015 Monits.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this work except in compliance with the License. You may obtain a copy of the

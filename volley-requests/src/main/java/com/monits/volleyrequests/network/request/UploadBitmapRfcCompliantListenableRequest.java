@@ -15,10 +15,6 @@
 */
 package com.monits.volleyrequests.network.request;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.support.annotation.NonNull;
@@ -33,6 +29,10 @@ import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.toolbox.HttpHeaderParser;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -63,25 +63,46 @@ public class UploadBitmapRfcCompliantListenableRequest extends
 	 * @param url The url to be requested.
 	 * @param listener The listener for success.
 	 * @param errListener The listener for errors.
+	 * @param cancelListener The listener for errors
 	 * @param bmp The bitmap to be uploaded.
 	 * @param filename The filename under which to submit the image.
 	 */
+
 	@SuppressWarnings("checkstyle:magicnumber")
 	public UploadBitmapRfcCompliantListenableRequest(final int method, @NonNull final String url,
-					@NonNull final Listener<String> listener,
-					@Nullable final ErrorListener errListener,
-					@NonNull final Bitmap bmp, @NonNull final String filename) {
-		super(method, url, listener, errListener);
-		
+						@Nullable final Listener<String> listener,
+						@Nullable final ErrorListener errListener,
+						@Nullable final CancelListener cancelListener,
+						@NonNull final Bitmap bmp, @NonNull final String filename) {
+		super(method, url, listener, errListener, cancelListener);
+
 		bitmap = bmp;
 		this.filename = filename;
-		
+
 		/*
 		 * Default Volley timeout is too low for most images in slow networks.
 		 * 30 secs timeout, 1 reattempt, 45 secs timeout for the second attempt
 		 */
 		setRetryPolicy(new DefaultRetryPolicy(30000, 1, 1.5f));
 	}
+	/**
+	 * Creates a new UploadBitmapRfcCompliantListenableRequest request with
+	 * less parameters for backwards compatibility
+	 *
+	 * @param method The request method, {@see Method}
+	 * @param url The url to be requested.
+	 * @param listener The listener for success.
+	 * @param errListener The listener for errors.
+	 * @param bmp The bitmap to be uploaded.
+	 * @param filename The filename under which to submit the image.
+	 */
+	public UploadBitmapRfcCompliantListenableRequest(final int method, @NonNull final String url,
+					@Nullable final Listener<String> listener,
+					@Nullable final ErrorListener errListener,
+					@NonNull final Bitmap bmp, @NonNull final String filename) {
+		this(method, url, listener, errListener, null, bmp, filename);
+	}
+
 	
 	@Override
 	protected Response<String> parseNetworkResponse(final NetworkResponse response) {
@@ -115,5 +136,13 @@ public class UploadBitmapRfcCompliantListenableRequest extends
 		}
 		
 		return bos.toByteArray();
+	}
+
+	@Override
+	public String toString() {
+		return "UploadBitmapRfcCompliantListenableRequest{ "
+				+ "bitmap=" + bitmap
+				+ ", filename='" + filename + '\''
+				+ " }";
 	}
 }

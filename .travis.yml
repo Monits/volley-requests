@@ -1,0 +1,21 @@
+language: android
+android:
+  components:
+    - platform-tools
+    - tools
+    - android-22
+    - build-tools-22.0.1
+    - extra-android-support
+    - extra-android-m2repository
+jdk:
+  - oraclejdk8
+before_script:
+  - gradle wrapper
+script:
+  - ./gradlew build
+after_success:
+  - ./gradlew :volley-requests:jacocoTestReport :volley-requests:coveralls
+notifications:
+  email:
+    recipients:
+      - jmsotuyo@monits.com

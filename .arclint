@@ -7,21 +7,9 @@
                 "(^\\.arclint$)"
             ]
         },
-        "checkstyle": {
-            "type": "checkstyle-gradle",
-            "include": "(\\.java$)"
-        },
-        "pmd": {
-            "type": "pmd-gradle",
-            "include": "(\\.java$)"
-        },
-        "findbugs": {
-            "type": "findbugs-gradle",
-            "include": "(\\.java$)"
-        },
-        "android": {
-            "type": "AndroidLint",
-            "gradle-modules": [ "volley-requests" ]
+        "gradle": {
+            "type": "gradle",
+            "lints": [ "checkstyle", "findbugs", "pmd", "cpd", "android" ]
         },
         "chmod": {
             "type": "chmod"

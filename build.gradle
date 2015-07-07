@@ -4,7 +4,8 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'com.android.tools.build:gradle:1.2.3'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.4.0'
     }
 }
 
@@ -15,4 +16,9 @@ allprojects {
             url 'http://nexus.monits.com/content/groups/external'
         }
     }
+}
+
+// PMD 5.2+ requires gradle 2.4+
+wrapper {
+    gradleVersion = '2.4'
 }

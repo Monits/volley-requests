@@ -17,9 +17,8 @@ import com.android.volley.toolbox.HttpHeaderParser;
 public class MaybeRequestDecorator<T> extends RequestDecorator<T> {
 	private final T object;
 
-	public MaybeRequestDecorator(@NonNull final Request<T> request, final int method,
-					@NonNull final String url, @NonNull final T object) {
-		super(request, method, url);
+	public MaybeRequestDecorator(@NonNull final Request<T> request, @NonNull final T object) {
+		super(request);
 		this.object = object;
 	}
 
