@@ -2,10 +2,14 @@
 buildscript {
     repositories {
         jcenter()
+        maven {
+            url 'http://nexus.monits.com/content/repositories/oss-releases'
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.2.3'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.4.0'
+        classpath 'com.monits:static-code-analysis-plugin:1.1.2'
     }
 }
 
@@ -18,7 +22,6 @@ allprojects {
     }
 }
 
-// PMD 5.2+ requires gradle 2.4+
 wrapper {
-    gradleVersion = '2.4'
+    gradleVersion = '2.5'
 }
