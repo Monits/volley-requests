@@ -9,6 +9,10 @@ android:
     - extra-android-m2repository
 jdk:
   - oraclejdk8
+sudo: false
+cache:
+  directories:
+    - $HOME/.gradle
 before_script:
   - gradle wrapper
 script:
