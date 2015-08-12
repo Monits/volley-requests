@@ -9,7 +9,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:1.2.3'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.4.0'
-        classpath 'com.monits:static-code-analysis-plugin:1.1.2'
+        classpath 'com.monits:static-code-analysis-plugin:1.2.0'
     }
 }
 
