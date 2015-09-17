@@ -3,6 +3,7 @@ apply plugin: 'maven'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'com.monits.staticCodeAnalysis'
+apply plugin: 'com.jfrog.bintray'
 
 version = "1.3.0-SNAPSHOT"
 group = "com.monits"
@@ -169,4 +170,23 @@ uploadArchives {
             }
         }
     }
+}
+
+bintray {
+    user = project.ext.bintrayUsername
+    key = project.ext.bintrayApiKey
+    pkg {
+        repo = 'monits-android'
+        name = 'volley-requests'
+        userOrg = 'monits'
+        licenses = ['Apache-2.0']
+        issueTrackerUrl = 'https://github.com/Monits/volley-requests/issues'
+        vcsUrl = 'https://github.com/Monits/volley-requests.git'
+        version {
+            name = project.version
+            desc = 'Android Volley Extension Library'
+            released  = new Date()
+        }
+    }
+    configurations = ['archives']
 }
