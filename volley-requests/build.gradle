@@ -172,7 +172,11 @@ uploadArchives {
     }
 }
 
+ext.bintrayUsername = has("bintrayUsername") ? bintrayUsername : ""
+ext.bintrayApiKey = has("bintrayApiKey") ? bintrayApiKey : ""
+
 bintray {
+
     user = project.ext.bintrayUsername
     key = project.ext.bintrayApiKey
     pkg {
@@ -186,6 +190,7 @@ bintray {
             name = project.version
             desc = 'Android Volley Extension Library'
             released  = new Date()
+            vcsTag = project.version
         }
     }
     configurations = ['archives']
