@@ -73,7 +73,8 @@ public class JSONArrayRequestDecoratorTest
 			decorator.parseNetworkResponse(response);
 			verify(request).parseNetworkResponse(capture.capture());
 
-			assertEquals(jsonArray, new JSONArray(new String(capture.getValue().data, CHARSET)));
+			assertEquals("Failed to parse jsonArray response", jsonArray,
+				new JSONArray(new String(capture.getValue().data, CHARSET)));
 		} catch (final UnsupportedEncodingException | JSONException e) {
 			fail(e.getMessage());
 		}
@@ -91,7 +92,7 @@ public class JSONArrayRequestDecoratorTest
 					headers);
 			final Response<Object> parsedResponse = decorator.parseNetworkResponse(response);
 
-			assertFalse(parsedResponse.isSuccess());
+			assertFalse("The request has failed", parsedResponse.isSuccess());
 		} catch (final UnsupportedEncodingException e) {
 			fail(e.getMessage());
 		}
@@ -107,7 +108,7 @@ public class JSONArrayRequestDecoratorTest
 					headers);
 			final Response<Object> parsedResponse = decorator.parseNetworkResponse(response);
 
-			assertFalse(parsedResponse.isSuccess());
+			assertFalse("The request has failed", parsedResponse.isSuccess());
 		} catch (final UnsupportedEncodingException e) {
 			fail(e.getMessage());
 		}

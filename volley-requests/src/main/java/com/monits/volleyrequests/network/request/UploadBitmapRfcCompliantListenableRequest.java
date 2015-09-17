@@ -53,10 +53,9 @@ public class UploadBitmapRfcCompliantListenableRequest extends
 					+ "Content-Disposition: form-data; name=\"%1$s\"; filename=\"%1$s\"\r\n"
 					+ "Content-Type: image/jpeg\r\n\r\n";
 	private static final String MULTIPART_TAIL = "\r\n--" + BOUNDARY + "--\r\n";
-	
 	private final Bitmap bitmap;
 	private final String filename;
-	
+
 	/**
 	 * Creates a new UploadBitmapRfcCompliantListenableRequest request.
 	 * 
@@ -104,7 +103,6 @@ public class UploadBitmapRfcCompliantListenableRequest extends
 		this(method, url, listener, errListener, null, bmp, filename);
 	}
 
-	
 	@Override
 	protected Response<String> parseNetworkResponse(final NetworkResponse response) {
 		try {
@@ -135,7 +133,7 @@ public class UploadBitmapRfcCompliantListenableRequest extends
 		} catch (final IOException e) {
 			Log.wtf("UploadBitmapRfcCompliantListenableRequest", "Unexpected error building multipart body.", e);
 		}
-		
+
 		return bos.toByteArray();
 	}
 

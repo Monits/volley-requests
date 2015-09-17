@@ -43,7 +43,7 @@ public class MaybeRequestDecoratorTest
 		final NetworkResponse response = new NetworkResponse(HttpURLConnection.HTTP_CREATED, new byte[0],
 				Collections.<String, String>emptyMap(), false);
 		final Response<Object> r = decorator.parseNetworkResponse(response);
-		assertEquals(DEFAULT_OBJECT, r.result);
+		assertEquals("Failed to object in response", DEFAULT_OBJECT, r.result);
 	}
 
 	@Test

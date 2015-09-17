@@ -26,6 +26,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 public abstract class RequestDecorator<T> extends Request<T> {
 	protected final Request<T> wrapped;
 
+	/**
+	 * Constructor
+	 *
+	 * @param request The request to be decorated
+	 */
 	public RequestDecorator(@NonNull final Request<T> request) {
 		super(request.getMethod(), request.getUrl(), null);
 		this.wrapped = request;

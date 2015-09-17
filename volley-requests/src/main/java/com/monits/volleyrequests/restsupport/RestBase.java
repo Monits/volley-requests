@@ -29,9 +29,15 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 public abstract class RestBase<T, S> implements UrlBuilder, RequestBuilder<T, S> {
 	protected final String url;
+	@SuppressFBWarnings(value = "MISSING_FIELD_IN_TO_STRING",
+		justification = "No need to use in the toString")
 	protected final Gson gson;
+	@SuppressFBWarnings(value = "MISSING_FIELD_IN_TO_STRING",
+			justification = "No need to use in the toString")
 	protected final Class<T> type;
 
 	private final Map<String, String> queryParams = new HashMap<>();
@@ -186,7 +192,7 @@ public abstract class RestBase<T, S> implements UrlBuilder, RequestBuilder<T, S>
 				Request.Method.PATCH);
 	}
 
-	@SuppressWarnings("PMD.PreserveStackTrace")	// Until API level 21, it can't be done
+	@SuppressWarnings("PMD.PreserveStackTrace") // Until API level 21, it can't be done
 	@NonNull
 	@Override
 	public <U> RequestBuilder<U, ?> method(final int method, @NonNull final Class<U> clazz) {
@@ -208,12 +214,12 @@ public abstract class RestBase<T, S> implements UrlBuilder, RequestBuilder<T, S>
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + "{"
-				+ "url='" + url + '\''
-				+ ", queryParams=" + queryParams
-				+ ", headers=" + headers
-				+ ", method=" + method
-				+ '}';
+		return getClass().getSimpleName()
+			+ "{ url='" + url + '\''
+			+ ", queryParams=" + queryParams
+			+ ", headers=" + headers
+			+ ", method=" + method
+			+ " }";
 	}
 
 	@NonNull
@@ -248,7 +254,7 @@ public abstract class RestBase<T, S> implements UrlBuilder, RequestBuilder<T, S>
 		for (final Map.Entry<String, String> entry : headers.entrySet()) {
 			request.addHeader(entry.getKey(), entry.getValue());
 		}
-		
+
 		final Request<S> r;
 
 		// Allow client to intercept the request

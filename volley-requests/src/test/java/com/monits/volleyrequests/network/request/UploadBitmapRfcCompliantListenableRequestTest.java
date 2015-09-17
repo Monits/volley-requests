@@ -43,7 +43,7 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(RobolectricTestRunner.class)
 public class UploadBitmapRfcCompliantListenableRequestTest {
-	private final String CONTENT_TYPE = "Content-Type";
+	private final static String CONTENT_TYPE = "Content-Type";
 	private final static String CHARSET = "UTF-8";
 	private final static String RESPONSE = "response";
 

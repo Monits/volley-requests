@@ -32,6 +32,12 @@ import com.android.volley.toolbox.ImageLoader;
  */
 public class NullSafeImageLoader extends ImageLoader {
 
+	/**
+	 * Constructor
+	 *
+	 * @param queue The request queue where the request are loaded
+	 * @param imageCache The image cache
+	 */
 	public NullSafeImageLoader(@NonNull final RequestQueue queue,
 					@NonNull final ImageCache imageCache) {
 		super(queue, imageCache);
@@ -41,13 +47,11 @@ public class NullSafeImageLoader extends ImageLoader {
 	public ImageContainer get(@Nullable final String requestUrl,
 					@NonNull final ImageListener imageListener,
 					final int maxWidth, final int maxHeight) {
-		
 		if (requestUrl == null) {
 			final ImageContainer container = new ImageContainer(null, null, null, null);
 			imageListener.onResponse(container, true);
 			return container;
 		}
-		
 		return super.get(requestUrl, imageListener, maxWidth, maxHeight);
 	}
 }

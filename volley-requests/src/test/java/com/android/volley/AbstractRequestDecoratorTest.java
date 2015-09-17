@@ -225,7 +225,7 @@ public abstract class AbstractRequestDecoratorTest<T extends RequestDecorator<Ob
 		final String defaultToString = decorator.getClass().getName()
 				+ '@' + Integer.toHexString(decorator.hashCode());
 
-		assertThat(decorator.toString(), not(equalTo(defaultToString)));
-		assertNotNull(decorator.toString());
+		assertThat("toString is not override", decorator.toString(), not(equalTo(defaultToString)));
+		assertNotNull("toString return null", decorator.toString());
 	}
 }

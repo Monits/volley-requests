@@ -48,12 +48,12 @@ public abstract class AbstractJsonRfcCompliantListenableRequestTest<S, T extends
 
 		request.addHeader(CUSTOM_HEADER, CUSTOM_HEADER_VALUE);
 
-		assertThat(request.getHeaders(), hasKey(CUSTOM_HEADER));
+		assertThat("Failed to add headers", request.getHeaders(), hasKey(CUSTOM_HEADER));
 	}
 
 	@Test
 	public void testBodyContentType() {
-		assertEquals("application/json", request.getBodyContentType());
+		assertEquals("Failed setting the content type", "application/json", request.getBodyContentType());
 	}
 
 	@Test

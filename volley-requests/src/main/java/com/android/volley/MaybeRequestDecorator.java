@@ -32,6 +32,12 @@ import java.net.HttpURLConnection;
 public class MaybeRequestDecorator<T> extends RequestDecorator<T> {
 	private final T object;
 
+	/**
+	 * Constructor
+	 *
+	 * @param request The request to be decorated
+	 * @param object The object you want to send in the request
+	 */
 	public MaybeRequestDecorator(@NonNull final Request<T> request, @NonNull final T object) {
 		super(request);
 		this.object = object;

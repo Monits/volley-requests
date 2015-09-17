@@ -56,20 +56,20 @@ import java.util.regex.Pattern;
  */
 @Deprecated
 public class RestResource<T> {
-	@Retention(RetentionPolicy.SOURCE)
-	@IntDef({ Method.POST, Method.PUT })
-	public @interface SaveMethod { }
-
 	private static final String PARAMETERS_REGEX = "/(:([^/]+))";
 	private static final String REMOVE_MULTIPLE_SLASH = "/{2,}";
 	private static final String REMOVE_FINAL_SLASH = "/$";
 	private static final Pattern PATTERN = Pattern.compile(PARAMETERS_REGEX);
+
 	protected final Gson gson;
 	private final String resource;
 	private final Class<T> clazz;
 	private final String hostAndPort;
 	private String elementsKey = "elements";
 	private final Type listTypeToken;
+	@Retention(RetentionPolicy.SOURCE)
+	@IntDef({ Method.POST, Method.PUT })
+	public @interface SaveMethod { }
 
 	/**
 	 * Create a new instance of RestResource

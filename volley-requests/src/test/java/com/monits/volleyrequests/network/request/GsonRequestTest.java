@@ -38,7 +38,7 @@ import static junit.framework.Assert.fail;
 @RunWith(RobolectricTestRunner.class)
 public class GsonRequestTest
 		extends AbstractJsonRfcCompliantListenableRequestTest<SampleData, GsonRequest<SampleData>> {
-	private final String CONTENT_TYPE = "Content-Type";
+	private static final String CONTENT_TYPE = "Content-Type";
 	private static final String CHARSET = "UTF-8";
 	private static final String STRING_DATA = "my string data";
 

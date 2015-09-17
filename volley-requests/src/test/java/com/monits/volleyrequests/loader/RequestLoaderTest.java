@@ -75,7 +75,8 @@ public class RequestLoaderTest {
 		final Request capturedRequest = captor.getValue();
 
 		capturedRequest.cancel();
-		assertNotEquals(request.isCanceled(), capturedRequest.isCanceled());
+		assertNotEquals("Failed to cancel request", request.isCanceled(),
+			capturedRequest.isCanceled());
 		verify(request, never()).cancel();
 	}
 
@@ -93,7 +94,7 @@ public class RequestLoaderTest {
 		// Actually check it's behaviour
 		capturedRequest.markDelivered();
 		verify(request, never()).markDelivered();
-		assertNotEquals(request.hasHadResponseDelivered(),
+		assertNotEquals("Failed to deliver response", request.hasHadResponseDelivered(),
 				captor.getValue().hasHadResponseDelivered());
 	}
 
@@ -105,7 +106,7 @@ public class RequestLoaderTest {
 		verify(requestQueue).add(captor.capture());
 		loader.onStopLoading();
 
-		assertTrue(captor.getValue().isCanceled());
+		assertTrue("Failed to cancel request", captor.getValue().isCanceled());
 	}
 
 	@Test
@@ -117,7 +118,7 @@ public class RequestLoaderTest {
 		final Request request = captor.getValue();
 		loader.onReset();
 		loader.onForceLoad();
-		assertFalse(request.isCanceled());
+		assertFalse("The request was canceled", request.isCanceled());
 	}
 
 	@Test
