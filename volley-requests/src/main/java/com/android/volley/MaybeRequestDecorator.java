@@ -17,9 +17,9 @@ package com.android.volley;
 
 import android.support.annotation.NonNull;
 
-import org.apache.http.HttpStatus;
-
 import com.android.volley.toolbox.HttpHeaderParser;
+
+import java.net.HttpURLConnection;
 
 /**
  * Class to parse a list of all items in a collection from a NetworkResponse
@@ -39,7 +39,7 @@ public class MaybeRequestDecorator<T> extends RequestDecorator<T> {
 
 	@Override
 	protected Response<T> parseNetworkResponse(final NetworkResponse response) {
-		if (response.statusCode == HttpStatus.SC_CREATED) {
+		if (response.statusCode == HttpURLConnection.HTTP_CREATED) {
 			return Response.success(object,
 					HttpHeaderParser.parseCacheHeaders(response));
 		}

@@ -38,6 +38,7 @@ import static org.mockito.Mockito.verify;
 @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT",
 	justification = "We want to make sure calls are delegated, not their effect")
 public abstract class AbstractRequestDecoratorTest<T extends RequestDecorator<Object>> {
+	protected static final String CONTENT_TYPE = "Content-Type";
 	protected T decorator;
 	protected Request<Object> request;
 

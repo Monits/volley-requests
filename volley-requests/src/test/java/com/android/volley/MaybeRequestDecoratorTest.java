@@ -17,15 +17,12 @@ package com.android.volley;
 
 import android.support.annotation.NonNull;
 
-import org.apache.http.HttpStatus;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
-
+import java.net.HttpURLConnection;
 import java.util.Collections;
-
 
 import static junit.framework.Assert.assertEquals;
 
@@ -43,7 +40,7 @@ public class MaybeRequestDecoratorTest
 
 	@Test
 	public void testParseNetworkResponseWithCreatedStatus() {
-		final NetworkResponse response = new NetworkResponse(HttpStatus.SC_CREATED, new byte[0],
+		final NetworkResponse response = new NetworkResponse(HttpURLConnection.HTTP_CREATED, new byte[0],
 				Collections.<String, String>emptyMap(), false);
 		final Response<Object> r = decorator.parseNetworkResponse(response);
 		assertEquals(DEFAULT_OBJECT, r.result);
