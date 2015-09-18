@@ -36,6 +36,12 @@ import java.io.UnsupportedEncodingException;
 public class JSONArrayRequestDecorator<T> extends RequestDecorator<T> {
 	private final String elementsKey;
 
+	/**
+	 * Create a {@link RequestDecorator} for json array
+	 *
+	 * @param request The request to be decorated
+	 * @param elementsKey The key name of the json array
+	 */
 	public JSONArrayRequestDecorator(@NonNull final Request<T> request, @NonNull final String elementsKey) {
 		super(request);
 		this.elementsKey = elementsKey;

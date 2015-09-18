@@ -21,7 +21,6 @@ import com.android.volley.AuthFailureError;
 
 import com.google.gson.Gson;
 
-import org.apache.http.protocol.HTTP;
 import org.junit.Test;
 
 import org.junit.runner.RunWith;
@@ -39,6 +38,7 @@ import static junit.framework.Assert.fail;
 @RunWith(RobolectricTestRunner.class)
 public class GsonRequestTest
 		extends AbstractJsonRfcCompliantListenableRequestTest<SampleData, GsonRequest<SampleData>> {
+	private static final String CONTENT_TYPE = "Content-Type";
 	private static final String CHARSET = "UTF-8";
 	private static final String STRING_DATA = "my string data";
 
@@ -66,7 +66,7 @@ public class GsonRequestTest
 		final SampleData data = newValidResponse();
 		final String json = new Gson().toJson(data);
 		final Map<String, String> headers = new HashMap<>();
-		headers.put(HTTP.CONTENT_TYPE, "application/javascript; charset=" + CHARSET);
+		headers.put(CONTENT_TYPE, "application/javascript; charset=" + CHARSET);
 
 		try {
 			final NetworkResponse networkResponse = new NetworkResponse(
@@ -85,7 +85,7 @@ public class GsonRequestTest
 		final SampleData data = newValidResponse();
 		final String json = new Gson().toJson(data);
 		final Map<String, String> headers = new HashMap<>();
-		headers.put(HTTP.CONTENT_TYPE, "application/javascript; charset=nonexistingcharset");
+		headers.put(CONTENT_TYPE, "application/javascript; charset=nonexistingcharset");
 
 		try {
 			final NetworkResponse networkResponse = new NetworkResponse(
@@ -109,7 +109,7 @@ public class GsonRequestTest
 		// This method is not delegated, but overridden by the decorator
 		final String json = "{data: null"; // Malformed json
 		final Map<String, String> headers = new HashMap<>();
-		headers.put(HTTP.CONTENT_TYPE, "application/javascript; charset=" + CHARSET);
+		headers.put(CONTENT_TYPE, "application/javascript; charset=" + CHARSET);
 
 		try {
 			final NetworkResponse networkResponse = new NetworkResponse(

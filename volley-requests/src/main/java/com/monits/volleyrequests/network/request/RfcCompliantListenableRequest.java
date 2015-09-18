@@ -76,7 +76,7 @@ public abstract class RfcCompliantListenableRequest<T> extends ListenableRequest
 			throw new IllegalArgumentException(
 				"DEPRECATED_GET_OR_POST is deprecated and not supported, choose wither GET or POST");
 		}
-		
+
 		// Should we really hit the server?
 		setShouldCache(method == Method.GET || method == Method.HEAD);
 	}
@@ -99,7 +99,7 @@ public abstract class RfcCompliantListenableRequest<T> extends ListenableRequest
 	@Override
 	public Request<?> setRequestQueue(final RequestQueue requestQueue) {
 		this.requestQueue = requestQueue;
-		
+
 		return super.setRequestQueue(requestQueue);
 	}
 

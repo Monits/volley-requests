@@ -30,7 +30,11 @@ import com.google.gson.JsonSyntaxException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 public class GsonRequest<T> extends JsonRfcCompliantListenableRequest<T> {
+	@SuppressFBWarnings(value = "MISSING_FIELD_IN_TO_STRING",
+		justification = "No need to use in the toString")
 	private final Gson gson;
 	private final Type clazz;
 
@@ -39,6 +43,8 @@ public class GsonRequest<T> extends JsonRfcCompliantListenableRequest<T> {
 	 *
 	 * @param method The request method, {@see Method}
 	 * @param url The url to be requested.
+	 * @param gson The gson instance to parse the response
+	 * @param clazz The {@link Type} of the class T
 	 * @param listener The listener for success.
 	 * @param errListener The listener for errors.
 	 * @param cancelListener The listener for errors.
@@ -62,6 +68,8 @@ public class GsonRequest<T> extends JsonRfcCompliantListenableRequest<T> {
 	 *
 	 * @param method The request method, {@see Method}
 	 * @param url The url to be requested.
+	 * @param gson The gson instance to parse the response
+	 * @param clazz The {@link Type} of the class T
 	 * @param listener The listener for success.
 	 * @param errListener The listener for errors.
 	 * @param jsonBody The contents of the json to be sent in the request's body.
@@ -87,5 +95,12 @@ public class GsonRequest<T> extends JsonRfcCompliantListenableRequest<T> {
 		} catch (final JsonSyntaxException e) {
 			return Response.error(new ParseError(e));
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "GsonRequest{ clazz="
+			+ clazz
+			+ " }";
 	}
 }

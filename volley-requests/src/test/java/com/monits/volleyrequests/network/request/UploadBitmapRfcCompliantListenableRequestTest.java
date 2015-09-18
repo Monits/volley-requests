@@ -23,7 +23,6 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 
-import org.apache.http.protocol.HTTP;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,6 +43,7 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(RobolectricTestRunner.class)
 public class UploadBitmapRfcCompliantListenableRequestTest {
+	private final static String CONTENT_TYPE = "Content-Type";
 	private final static String CHARSET = "UTF-8";
 	private final static String RESPONSE = "response";
 
@@ -65,7 +65,7 @@ public class UploadBitmapRfcCompliantListenableRequestTest {
 	@Test
 	public void testParseNetworkResponseIllegalCharset() throws UnsupportedEncodingException {
 		final Map<String, String> headers = new HashMap<>();
-		headers.put(HTTP.CONTENT_TYPE, "text/plain; charset=nonexistingcharset");
+		headers.put(CONTENT_TYPE, "text/plain; charset=nonexistingcharset");
 
 		final NetworkResponse networkResponse = new NetworkResponse(RESPONSE.getBytes(CHARSET), headers);
 
@@ -76,7 +76,7 @@ public class UploadBitmapRfcCompliantListenableRequestTest {
 	@Test
 	public void testParseNetworkResponse() throws UnsupportedEncodingException {
 		final Map<String, String> headers = new HashMap<>();
-		headers.put(HTTP.CONTENT_TYPE, "text/plain; charset=" + CHARSET);
+		headers.put(CONTENT_TYPE, "text/plain; charset=" + CHARSET);
 
 		final NetworkResponse networkResponse = new NetworkResponse(RESPONSE.getBytes(CHARSET), headers);
 

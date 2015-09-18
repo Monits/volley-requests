@@ -17,9 +17,9 @@ package com.android.volley;
 
 import android.support.annotation.NonNull;
 
-import org.apache.http.HttpStatus;
-
 import com.android.volley.toolbox.HttpHeaderParser;
+
+import java.net.HttpURLConnection;
 
 /**
  * Class to parse a list of all items in a collection from a NetworkResponse
@@ -32,6 +32,12 @@ import com.android.volley.toolbox.HttpHeaderParser;
 public class MaybeRequestDecorator<T> extends RequestDecorator<T> {
 	private final T object;
 
+	/**
+	 * Constructor
+	 *
+	 * @param request The request to be decorated
+	 * @param object The object you want to send in the request
+	 */
 	public MaybeRequestDecorator(@NonNull final Request<T> request, @NonNull final T object) {
 		super(request);
 		this.object = object;
@@ -39,7 +45,7 @@ public class MaybeRequestDecorator<T> extends RequestDecorator<T> {
 
 	@Override
 	protected Response<T> parseNetworkResponse(final NetworkResponse response) {
-		if (response.statusCode == HttpStatus.SC_CREATED) {
+		if (response.statusCode == HttpURLConnection.HTTP_CREATED) {
 			return Response.success(object,
 					HttpHeaderParser.parseCacheHeaders(response));
 		}

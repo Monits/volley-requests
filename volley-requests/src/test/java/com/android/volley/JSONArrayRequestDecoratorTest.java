@@ -17,7 +17,6 @@ package com.android.volley;
 
 import android.support.annotation.NonNull;
 
-import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -64,7 +63,7 @@ public class JSONArrayRequestDecoratorTest
 		}
 
 		final Map<String, String> headers = new HashMap<>();
-		headers.put(HTTP.CONTENT_TYPE, "application/javascript; charset=" + CHARSET);
+		headers.put(CONTENT_TYPE, "application/javascript; charset=" + CHARSET);
 
 		try {
 			final ArgumentCaptor<NetworkResponse> capture = ArgumentCaptor.forClass(
@@ -74,7 +73,8 @@ public class JSONArrayRequestDecoratorTest
 			decorator.parseNetworkResponse(response);
 			verify(request).parseNetworkResponse(capture.capture());
 
-			assertEquals(jsonArray, new JSONArray(new String(capture.getValue().data, CHARSET)));
+			assertEquals("Failed to parse jsonArray response", jsonArray,
+				new JSONArray(new String(capture.getValue().data, CHARSET)));
 		} catch (final UnsupportedEncodingException | JSONException e) {
 			fail(e.getMessage());
 		}
@@ -85,14 +85,14 @@ public class JSONArrayRequestDecoratorTest
 		final JSONObject json = new JSONObject();
 
 		final Map<String, String> headers = new HashMap<>();
-		headers.put(HTTP.CONTENT_TYPE, "application/javascript; charset=nonexistingcharset");
+		headers.put(CONTENT_TYPE, "application/javascript; charset=nonexistingcharset");
 
 		try {
 			final NetworkResponse response = new NetworkResponse(json.toString().getBytes(CHARSET),
 					headers);
 			final Response<Object> parsedResponse = decorator.parseNetworkResponse(response);
 
-			assertFalse(parsedResponse.isSuccess());
+			assertFalse("The request has failed", parsedResponse.isSuccess());
 		} catch (final UnsupportedEncodingException e) {
 			fail(e.getMessage());
 		}
@@ -101,14 +101,14 @@ public class JSONArrayRequestDecoratorTest
 	@Test
 	public void testParseNetworkResponseWithBadJson() {
 		final Map<String, String> headers = new HashMap<>();
-		headers.put(HTTP.CONTENT_TYPE, "application/javascript; charset=" + CHARSET);
+		headers.put(CONTENT_TYPE, "application/javascript; charset=" + CHARSET);
 
 		try {
 			final NetworkResponse response = new NetworkResponse("{test: [1,2}".getBytes(CHARSET),
 					headers);
 			final Response<Object> parsedResponse = decorator.parseNetworkResponse(response);
 
-			assertFalse(parsedResponse.isSuccess());
+			assertFalse("The request has failed", parsedResponse.isSuccess());
 		} catch (final UnsupportedEncodingException e) {
 			fail(e.getMessage());
 		}
