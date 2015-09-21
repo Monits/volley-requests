@@ -13,8 +13,6 @@ sudo: false
 cache:
   directories:
     - $HOME/.gradle
-before_script:
-  - gradle wrapper
 script:
   - ./gradlew build
 after_success:
