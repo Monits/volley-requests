@@ -11,6 +11,7 @@ buildscript {
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.4.0'
         classpath 'com.monits:static-code-analysis-plugin:1.+'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.3.1'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.3'
     }
 }
 
