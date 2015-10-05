@@ -5,18 +5,17 @@ implementations and utilities based on Android's Volley library.
 
 [![Build Status](https://travis-ci.org/Monits/volley-requests.svg?branch=master)](https://travis-ci.org/Monits/volley-requests)
 [![Coverage Status](https://coveralls.io/repos/Monits/volley-requests/badge.svg?branch=master)](https://coveralls.io/r/Monits/volley-requests?branch=master)
+[![Download](https://api.bintray.com/packages/monits/monits-android/volley-requests/images/download.svg) ](https://bintray.com/monits/monits-android/volley-requests/_latestVersion)
 
 # Usage
 
 ## Using Gradle
 
-You can just add the dependency by adding our maven repositories
+You can just add the dependency like below
 
 ```
 repositories {
-    maven {
-        url 'http://nexus.monits.com/content/repositories/oss-releases'
-    }
+    jcenter()
 }
 ```
 
@@ -24,14 +23,22 @@ And then you can add the library as dependency
 
 ```
 dependencies {
-    compile 'com.monits:volley-requests:1.1.0'
+    compile 'com.monits:volley-requests:1.3.1'
 }
 ```
 
-For `SNAPSHOT` versions you can use the repository url
-`http://nexus.monits.com/content/repositories/oss-snapshots`
+For older versions you need to use our repository.
 
-The latest current snapshot version is `1.2.0-SNAPSHOT`
+```
+repositories {
+    maven() {
+        url 'http://nexus.monits.com/content/repositories/oss-releases'
+    }
+}
+```
+
+And for `SNAPSHOTS` you need to change the url to `http://nexus.monits.com/content/repositories/oss-snapshots`.
+The latest current snapshot version is `1.4.0-SNAPSHOT`
 
 ## Using Eclipse ADT
 
